@@ -39,21 +39,14 @@ proc `[]`(sur:Surface, x,y:int):Color =
   let translation = (cy-sur.origin.y0-y)*sur.img.width + x+cx+sur.origin.x0
   result = sur.img.data[translation]
 
-proc `[]=`(sur: var Surface, x,y:int, color:Color) =
-  
+proc `[]=`(sur: var Surface, x,y:int, color:Color) =  
   let
-    cx = sur.img.width div 2
-    cy = sur.img.height div 2
- 
-  #assert(cx+1 >= x)
-  #assert(cy+1 >= y)
-  
-  #assert(-cx < x)
-  #assert(-cy < y)
-  let translation = (cy-(sur.origin.y0 div 2)-y)*sur.img.width + cx-(sur.origin.x0 div 2)+x
+    cx = (sur.img.width-1) div 2
+    cy = (sur.img.height-1) div 2
+  let translation = (cy+((sur.origin.y0) div 2)-y)*sur.img.width + cx-(sur.origin.x0 div 2)+x
   sur.img.data[translation] = color
 
-proc fillWith*(sur: var Surface,color:NColor=NColor(0xFFFFFFFF)) =
+proc fillWith*(sur: var Surface,color:Color=White) =
   ## Loop over every pixel in `img` and sets its color to `color` 
   for pix in sur.img.data.mitems: pix = color 
 
@@ -74,29 +67,57 @@ proc zip*[S, T](oa1: openarray[S], oa2: openarray[T]): seq[tuple[x: S, y: T]] =
   newSeq(result, m)
   for i in 0 .. m-1: result[i] = (oa1[i], oa2[i])
 
-type PlotMode = enum
+type PlotMode* = enum
   Dots = 0
   Lines = 1
 
-proc drawBresLine*(srf: var Surface, px,py,qx,qy: int,color:Color=Color(0x000000FF),t:int = 1) =
-  let
-    dx = abs(qx - px)
-    sx = if px < qx: 1 else: -1
-    dy = abs(qy - py)
-    sy = if py < qy: 1 else: -1
-  var
-    pxi = px
-    pyi = py
-    err = (if dx > dy: dx else: -dy) div 2
-  while true:
-    srf[pxi,pyi] = color
-    if pxi == qx and pyi == qy: break
-    if err > -dx:
-      err -= dy
-      pxi += sx
-    if err < dy:
+proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
+  ## Draws a line between x1,y1 and x2,y2. Uses Bresenham's line algorithm.
+  var dx = x2-x1
+  var dy = y2-y1
+  
+  let ix = if dx > 0 : 1 elif dx<0 : -1 else: 0
+  let iy = if dy > 0 : 1 elif dy<0 : -1 else: 0
+
+  dx = abs(dx) shl 1
+  dy = abs(dy) shl 1
+
+  var xi = x1
+  var yi = y1
+
+  srf[x1,y1] = color
+  # This handles x>=0
+  if dx>=dy:
+    var err = dy-(dx shr 1)
+
+  # Handle 1 and 4 quadrants 
+    while xi != x2:
+      if (err >= 0):
+        err -= dx
+        yi+=iy
+      
+      err += dy
+      xi += ix
+      srf[xi,yi] = color
+#    elif x2-x1<0:
+ #   # Handle 2 and 3 quadrants 
+  #    while xi != x2:
+   #     if (err >= 0 and (err == 1 or ix<0) ):
+    #      err -= dx
+     #     yi+=iy
+      #  
+       # err += dy
+       # xi += ix
+       # srf[xi,yi] = color
+  else:
+    var err = dx - (dy shr 1)
+    while yi!=y2:
+      if err >= 0:
+        err -= dy
+        xi += ix
       err += dx
-      pyi += sy
+      yi += iy
+      srf[xi,yi] = color
 
 proc flipX(srf:var Surface) =
 # TODO: swap
@@ -106,23 +127,6 @@ proc flipX(srf:var Surface) =
       let tmp = srf[r,c]
       srf[r,c] = srf[srf.height-r-1,c]
       srf[srf.height-r-1,c] = tmp
-#[]
-proc drawXY(x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1, bgColor:Color = White ):Surface =
-  result = createSurface( (scale*max(x)).int+1, (scale*max(y)).int+1)
-  result.fillWith(bgColor)
-  ## Plot x,y with color `lncolor` and `scale`
-  # TODO: hanlde negative values
-  let axis = if x.len>y.len: y.len else: x.len
-
-  if mode == Dots:
-    for i in 0..axis-1: result[(scale*y[^(1+i)]).int,(scale*x[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
-  elif mode == Lines:
-    for i in 0..axis-2:
-      echo scale*x[i], "-" ,scale*y[i], "-" ,scale*x[i+1], "-" ,scale*y[i+1] 
-      result.drawBresLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)      
-    result.flipX # Drawing is upside down because of matrix coordinates starting top left
-]#
-
 
 proc initSurface*(minx,maxx,miny,maxy:float):Surface =
   let dx = (maxx-minx)
@@ -139,21 +143,76 @@ proc initSurface*(minx,maxx,miny,maxy:float):Surface =
   result.yaxis = (miny.int, maxy.int)
 
 proc drawAxis*(sur: var Surface, step:int=1,color:Color=Black) =
-  sur.drawBresLine(sur.xaxis.min,0,sur.xaxis.max,0,color)
-  sur.drawBresLine(0,sur.yaxis.min,0,sur.yaxis.max,color)
+  sur.drawLine(sur.xaxis.min,0,sur.xaxis.max,0,color)
+  sur.drawLine(0,sur.yaxis.min,0,sur.yaxis.max,color)
 
   for x in countup(sur.xaxis.min,sur.xaxis.max,step):
-    if x != sur.xaxis.min and x != sur.xaxis.max : sur.drawBresLine(x,-1,x,1,color)
+    if x != sur.xaxis.min and x != sur.xaxis.max : sur.drawLine(x,-1,x,1,color)
   for y in countup(sur.yaxis.min,sur.yaxis.max,step):
-    if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawBresLine(-1,y,1,y,color)
+    if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawLine(-1,y,1,y,color)
+
+proc drawXY*(x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1, bgColor:Color = White ):Surface =
+  result = initSurface( scale*min(x), scale*max(x), scale*min(y), scale*max(y) )
+  result.fillWith(bgColor)
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  let axis = if x.len>y.len: y.len else: x.len
+  result.drawAxis(5)
+  
+  if mode == Dots:
+    for i in 0..axis-1: result[(scale*x[i]).int,(scale*y[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
+  elif mode == Lines:
+    for i in 0..<axis-2:      
+      result.drawLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)
+    result.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
+
+proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1 ) =
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  let axis = if x.len>y.len: y.len else: x.len
+  
+  if mode == Dots:
+    for i in 0..axis-1: sur[(scale*x[i]).int,(scale*y[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
+  elif mode == Lines:
+    for i in 0..<axis-2:
+      sur.drawLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)
+    sur.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
+
+
+proc sin (x:openarray[float]):seq[float] =
+  result = map(x) do (x:float)->float : 
+    sin(x)
+
+proc cos (x:openarray[float]):seq[float] =
+  result = map(x) do (x:float)->float : 
+    cos(x)
+
+iterator linsp*[T](fm,to,step:T):T =
+  if fm<to:
+    var res: T = T(fm)
+    while res<=to:
+      yield res
+      res+=step
+  elif fm>to:
+    var res: T = T(fm)
+    while res>=to:
+      yield res
+      res-=step
+  else:
+    yield fm
+    
+proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
+    
 
 when isMainModule:
   var srf = initSurface(-240,320,-240,240)
   srf.fillWith(White)
   srf.drawAxis(10)
-  srf.drawBresLine(0,0,100,100,Red)
-  srf.drawBresLine(0,0,-100,100,Green)
-  srf.drawBresLine(0,0,100,-100,Blue)
-  srf.drawBresLine(0,0,-100,-100,Purple)
-  srf.drawBresLine(-100,100,100,100,Yellow)
+  srf.drawLine(0,0,100,100,Red)
+  srf.drawLine(0,0,-100,100,Green)
+  srf.drawLine(0,0,100,-100,Blue)
+  srf.drawLine(0,0,-100,-100,Purple)
+  srf.drawLine(50,0,-100,-100,Purple)
+  srf.drawLine(-100,100,100,100,Yellow)
+  srf.drawLine(100,-100,-100,-100,Yellow)
   srf.saveSurfaceTo("plot.png")
