@@ -86,7 +86,6 @@ proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
   var xi = x1
   var yi = y1
 
- # echo "xi ", xi," yi ", yi
   srf[xi,yi] = color
   
   if dx>=dy:
@@ -135,7 +134,6 @@ proc initSurface*(minx,maxx,miny,maxy:float):Surface =
 proc drawAxis*(sur: var Surface, step:int=1,color:Color=Black) =
   sur.drawLine(sur.xaxis.min,0,sur.xaxis.max,0,color)
   sur.drawLine(0,sur.yaxis.min,0,sur.yaxis.max,color)
-  echo sur.xaxis, "iii", sur.yaxis
   for x in countup(sur.xaxis.min,sur.xaxis.max,step):
     if x != sur.xaxis.min and x != sur.xaxis.max : sur.drawLine(x,-1,x,1,color)
   for y in countup(sur.yaxis.min,sur.yaxis.max,step):
