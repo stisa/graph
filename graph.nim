@@ -178,14 +178,8 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:
       sur.drawLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)
     sur.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
 
-
-proc sin (x:openarray[float]):seq[float] =
-  result = map(x) do (x:float)->float : 
-    sin(x)
-
-proc cos (x:openarray[float]):seq[float] =
-  result = map(x) do (x:float)->float : 
-    cos(x)
+proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]), lncolor:Color=Black, mode:PlotMode=Dots,scale:float=1) {.inline.} =
+  drawFunc(sur,x,fn(x),lncolor,mode,scale)
 
 iterator linsp*[T](fm,to,step:T):T =
   if fm<to:
@@ -205,14 +199,10 @@ proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
     
 
 when isMainModule:
-  var srf = initSurface(-240,320,-240,240)
-  srf.fillWith(White)
-  srf.drawAxis(10)
-  srf.drawLine(0,0,100,100,Red)
-  srf.drawLine(0,0,-100,100,Green)
-  srf.drawLine(0,0,100,-100,Blue)
-  srf.drawLine(0,0,-100,-100,Purple)
-  srf.drawLine(50,0,-100,-100,Purple)
-  srf.drawLine(-100,100,100,100,Yellow)
-  srf.drawLine(100,-100,-100,-100,Yellow)
+  proc cos (x:openarray[float]):seq[float] =
+    result = map(x) do (x:float)->float : 
+      cos(x)
+
+  let xx = linspace(-Pi, Pi, 0.01)
+  var srf = drawXY(xx,cos(xx),Blue,Lines,100)
   srf.saveSurfaceTo("plot.png")
