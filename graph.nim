@@ -41,9 +41,10 @@ proc `[]`(sur:Surface, x,y:int):Color =
 
 proc `[]=`(sur: var Surface, x,y:int, color:Color) =  
   let
-    cx = (sur.img.width-1) div 2
-    cy = (sur.img.height-1) div 2
+    cx = (sur.img.width) div 2
+    cy = (sur.img.height) div 2
   let translation = (cy+((sur.origin.y0) div 2)-y)*sur.img.width + cx-(sur.origin.x0 div 2)+x
+ # echo  cx-(sur.origin.x0 div 2)+x, " ||| ",cy+((sur.origin.y0) div 2)-y
   sur.img.data[translation] = color
 
 proc fillWith*(sur: var Surface,color:Color=White) =
@@ -85,12 +86,11 @@ proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
   var xi = x1
   var yi = y1
 
-  srf[x1,y1] = color
-  # This handles x>=0
+ # echo "xi ", xi," yi ", yi
+  srf[xi,yi] = color
+  
   if dx>=dy:
     var err = dy-(dx shr 1)
-
-  # Handle 1 and 4 quadrants 
     while xi != x2:
       if (err >= 0):
         err -= dx
@@ -99,16 +99,6 @@ proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
       err += dy
       xi += ix
       srf[xi,yi] = color
-#    elif x2-x1<0:
- #   # Handle 2 and 3 quadrants 
-  #    while xi != x2:
-   #     if (err >= 0 and (err == 1 or ix<0) ):
-    #      err -= dx
-     #     yi+=iy
-      #  
-       # err += dy
-       # xi += ix
-       # srf[xi,yi] = color
   else:
     var err = dx - (dy shr 1)
     while yi!=y2:
@@ -129,44 +119,30 @@ proc flipX(srf:var Surface) =
       srf[srf.height-r-1,c] = tmp
 
 proc initSurface*(minx,maxx,miny,maxy:float):Surface =
-  let dx = (maxx-minx)
-  let dy = (maxy-miny)
+  let dx = abs(maxx)+abs(minx)
+  let dy = abs(maxy)+abs(miny)
   let xl = if dx mod 2 == 0 : dx+5 else: dx+4 # pad the surface a bit
   let yl = if dy mod 2 == 0 : dy+5 else: dy+4 
 
   let data = newSeq[Color]((xl.ceil.int) * (yl.ceil.int))
   result.img = Image(width: xl.ceil.int, height: yl.ceil.int, data: data)
-  result.width = abs(dx).ceil.int
-  result.height = abs(dy).ceil.int
-  result.origin = ( abs(maxx.int)-abs(minx.int), abs(maxy.int)-abs(miny.int) )
-  result.xaxis = (minx.int, maxx.int)
-  result.yaxis = (miny.int, maxy.int)
+  result.width = dx.int
+  result.height = dy.int
+  result.origin = ( (abs(maxx)-abs(minx)).ceil.int, (abs(maxy)-abs(miny)).ceil.int )
+  result.xaxis = (minx.floor.int, maxx.ceil.int)
+  result.yaxis = (miny.floor.int, maxy.ceil.int)
 
 proc drawAxis*(sur: var Surface, step:int=1,color:Color=Black) =
   sur.drawLine(sur.xaxis.min,0,sur.xaxis.max,0,color)
   sur.drawLine(0,sur.yaxis.min,0,sur.yaxis.max,color)
-
+  echo sur.xaxis, "iii", sur.yaxis
   for x in countup(sur.xaxis.min,sur.xaxis.max,step):
     if x != sur.xaxis.min and x != sur.xaxis.max : sur.drawLine(x,-1,x,1,color)
   for y in countup(sur.yaxis.min,sur.yaxis.max,step):
     if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawLine(-1,y,1,y,color)
 
-proc drawXY*(x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1, bgColor:Color = White ):Surface =
-  result = initSurface( scale*min(x), scale*max(x), scale*min(y), scale*max(y) )
-  result.fillWith(bgColor)
-  ## Plot x,y with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
-  let axis = if x.len>y.len: y.len else: x.len
-  result.drawAxis(5)
-  
-  if mode == Dots:
-    for i in 0..axis-1: result[(scale*x[i]).int,(scale*y[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
-  elif mode == Lines:
-    for i in 0..<axis-2:      
-      result.drawLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)
-    result.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
 
-proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1 ) =
+proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Lines, scale:float=1 ) =
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   let axis = if x.len>y.len: y.len else: x.len
@@ -174,12 +150,28 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:
   if mode == Dots:
     for i in 0..axis-1: sur[(scale*x[i]).int,(scale*y[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
   elif mode == Lines:
-    for i in 0..<axis-2:
+    for i in 0..axis-2: 
+      #cho sur.img.width, ".,.",sur.img.height
+      #cho scale*x[i], "::", scale*y[i], "::", scale*x[i+1], "::", scale*y[i+1]    
       sur.drawLine((scale*x[i]).int, (scale*y[i]).int, (scale*x[i+1]).int, (scale*y[i+1]).int, lncolor)
-    sur.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
+    #sur.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
 
-proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]), lncolor:Color=Black, mode:PlotMode=Dots,scale:float=1) {.inline.} =
+proc drawXY*(x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1, bgColor:Color = White ):Surface =
+  result = initSurface( scale*min(x), scale*max(x), scale*min(y), scale*max(y) )
+
+  result.fillWith(bgColor)
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  result.drawAxis(5)
+  result.drawFunc(x,y,lncolor,mode,scale)
+
+proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]):openarray[T], lncolor:Color=Black, mode:PlotMode=Dots,scale:float=1) {.inline.} =
   drawFunc(sur,x,fn(x),lncolor,mode,scale)
+
+proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Color=Black, mode:PlotMode=Dots,scale:float=1) =
+  let yy = map(x) do (x:T)->T:
+    fn(x)
+  drawFunc(sur, x, yy, lncolor, mode, scale)
 
 iterator linsp*[T](fm,to,step:T):T =
   if fm<to:
@@ -198,11 +190,4 @@ iterator linsp*[T](fm,to,step:T):T =
 proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
     
 
-when isMainModule:
-  proc cos (x:openarray[float]):seq[float] =
-    result = map(x) do (x:float)->float : 
-      cos(x)
-
-  let xx = linspace(-Pi, Pi, 0.01)
-  var srf = drawXY(xx,cos(xx),Blue,Lines,100)
-  srf.saveSurfaceTo("plot.png")
+when isMainModule: discard
