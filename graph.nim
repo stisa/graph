@@ -2,7 +2,7 @@ import npng
 import streams,sequtils,math, os
 
 type 
-  Color = uint32
+  Color* = uint32
   Surface* = object
     img : PNG ## Todo: make this a seq of pixels, make tje api backend agnostic
     width: int
@@ -35,19 +35,19 @@ proc `[]`(sur:Surface, x,y:int):Color =
   ## y: position along the vertical axis
   
   let
-    cx = sur.width div 2
-    cy = sur.height div 2    
+    cx = sur.realw div 2
+    cy = sur.realh div 2    
   
   assert(cx+1 >= x)
   assert(cy+1 >= y)
-  let translation = (cy-sur.origin.y0-y)*sur.width + x+cx+sur.origin.x0
+  let translation = (cy-sur.origin.y0-y)*sur.realw + x+cx+sur.origin.x0
   result = sur.pixels[translation]
 
 proc `[]=`(sur: var Surface, x,y:int, color:Color) =  
   let
-    cx = sur.width div 2
-    cy = sur.height div 2    
-  let translation = (cy+((sur.origin.y0) div 2)-y)*sur.width + cx-(sur.origin.x0 div 2)+x
+    cx = sur.realw div 2
+    cy = sur.realh div 2    
+  let translation = (cy+((sur.origin.y0))-y)*sur.realw + cx-(sur.origin.x0)+x
   # echo  cx-(sur.origin.x0 div 2)+x, " ||| ",cy+((sur.origin.y0) div 2)-y
   sur.pixels[translation] = color
 
@@ -130,16 +130,16 @@ proc initSurface*(minx,maxx,miny,maxy:float):Surface =
   result.pixels = newSeq[Color]((xl.ceil.int) * (yl.ceil.int))
   #result.img = PNG(w: xl.ceil.int, h: yl.ceil.int, pixels: data)
   #TODO: pad width or inner width
-  result.realh = yl.ceil.int
   result.realw = xl.ceil.int
+  result.realh = yl.ceil.int
 
   result.width = dx.int
   result.height = dy.int
   
-  echo len(result.pixels)
-  echo result.realw, " ", result.realh
+  #echo len(result.pixels)
+  #echo result.realw, " ", result.realh
 
-  result.origin = ( (abs(maxx)-abs(minx)).ceil.int, (abs(maxy)-abs(miny)).ceil.int )
+  result.origin = ( (abs(maxx)-abs(minx)).ceil.int div 2, (abs(maxy)-abs(miny)).ceil.int div 2 )
 
   result.xaxis = (minx.floor.int, maxx.ceil.int)
   result.yaxis = (miny.floor.int, maxy.ceil.int)
@@ -203,9 +203,19 @@ proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
 template plot*(x,y:openarray[float], lncolor:Color=Red, mode:PlotMode=Lines, scale:float=100,yscale:float=100, bgColor:Color = White) =
   let srf = drawXY(x,y,lncolor, mode, scale,yscale, bgColor)
   let pathto = currentSourcePath().changeFileExt(".png")
-  echo pathto
+  #echo pathto
   srf.saveSurfaceTo(pathto)
     
 
 when isMainModule:
   plot([0.0,1,2,3],[0.0,1,2,3])
+
+
+#[when isMainModule:
+  var rt = initSurface( 0,10,0,10 )
+
+  rt.fillWith(Yellow)
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  rt.drawLine(0,0,5,5,Red)
+  rt.saveSurfaceTo("test.png")]#
