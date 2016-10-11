@@ -1,61 +1,65 @@
-import nimage/nimage except `[]`,`[]=`
-import streams,sequtils,math
+import npng
+import streams,sequtils,math, os
 
 type 
+  Color = uint32
   Surface* = object
-    img : Image 
+    img : PNG ## Todo: make this a seq of pixels, make tje api backend agnostic
     width: int
     height: int
     origin: tuple[x0,y0:int] # origin relative to the middle of the surface
     xaxis : tuple[min,max:int] # the span on the x axis
     yaxis : tuple[min,max:int] # the span on the x axis
-  Color* = NColor # An alias for NColor
-
+    pixels: seq[Color]
+    realh:int
+    realw:int # affective width with padding and all
+  
 const
   ## Common colors used for testing
-  Transparent* = NColor(0x00000000)
-  Black* = NColor(0x000000FF)
-  Blue* = NColor(0x0000FFFF)
-  Green* = NColor(0x00FF00FF)
-  Red* = NColor(0xFF0000FF)
-  Purple* = NColor(0xFF00FFFF)
-  Yellow* = NColor(0xFFFF00FF)
-  White* = NColor(0xFFFFFFFF)
-  HalfTBlack* = NColor(0x00000088) ## HalfT<Color> colors are <color> at half alpha
-  HalfTBlue* = NColor(0x0000FF88)
-  HalfTGreen* = NColor(0x00FF0088)
-  HalfTRed* = NColor(0xFF000088)
-  HalftWhite* = NColor(0xFFFFFF88)
+  Transparent* = Color(0x00000000)
+  Black* = Color(0x000000FF)
+  Blue* = Color(0x0000FFFF)
+  Green* = Color(0x00FF00FF)
+  Red* = Color(0xFF0000FF)
+  Purple* = Color(0xFF00FFFF)
+  Yellow* = Color(0xFFFF00FF)
+  White* = Color(0xFFFFFFFF)
+  HalfTBlack* = Color(0x00000088) ## HalfT<Color> colors are <color> at half alpha
+  HalfTBlue* = Color(0x0000FF88)
+  HalfTGreen* = Color(0x00FF0088)
+  HalfTRed* = Color(0xFF000088)
+  HalftWhite* = Color(0xFFFFFF88)
   
 proc `[]`(sur:Surface, x,y:int):Color =
   ## x: position along the horizontal axis
   ## y: position along the vertical axis
+  
   let
-    cx = sur.img.width div 2
-    cy = sur.img.height div 2    
+    cx = sur.width div 2
+    cy = sur.height div 2    
   
   assert(cx+1 >= x)
   assert(cy+1 >= y)
-  let translation = (cy-sur.origin.y0-y)*sur.img.width + x+cx+sur.origin.x0
-  result = sur.img.data[translation]
+  let translation = (cy-sur.origin.y0-y)*sur.width + x+cx+sur.origin.x0
+  result = sur.pixels[translation]
 
 proc `[]=`(sur: var Surface, x,y:int, color:Color) =  
   let
-    cx = (sur.img.width) div 2
-    cy = (sur.img.height) div 2
-  let translation = (cy+((sur.origin.y0) div 2)-y)*sur.img.width + cx-(sur.origin.x0 div 2)+x
- # echo  cx-(sur.origin.x0 div 2)+x, " ||| ",cy+((sur.origin.y0) div 2)-y
-  sur.img.data[translation] = color
+    cx = sur.width div 2
+    cy = sur.height div 2    
+  let translation = (cy+((sur.origin.y0) div 2)-y)*sur.width + cx-(sur.origin.x0 div 2)+x
+  # echo  cx-(sur.origin.x0 div 2)+x, " ||| ",cy+((sur.origin.y0) div 2)-y
+  sur.pixels[translation] = color
 
 proc fillWith*(sur: var Surface,color:Color=White) =
   ## Loop over every pixel in `img` and sets its color to `color` 
-  for pix in sur.img.data.mitems: pix = color 
+  for pix in sur.pixels.mitems: pix = color 
 
 proc saveSurfaceTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
-  var file = newFileStream(filename, fmWrite)
-  sur.img.save_png(file)
-  file.close()
+  var tmp = npng.initPNG(sur.realw,sur.realh,sur.pixels)
+  tmp.writeToFile(filename)
+  
 
 proc zip*[S, T](oa1: openarray[S], oa2: openarray[T]): seq[tuple[x: S, y: T]] =
   ## Returns a new sequence with a combination of the two input openarrays.
@@ -123,11 +127,20 @@ proc initSurface*(minx,maxx,miny,maxy:float):Surface =
   let xl = if dx mod 2 == 0 : dx+5 else: dx+4 # pad the surface a bit
   let yl = if dy mod 2 == 0 : dy+5 else: dy+4 
 
-  let data = newSeq[Color]((xl.ceil.int) * (yl.ceil.int))
-  result.img = Image(width: xl.ceil.int, height: yl.ceil.int, data: data)
+  result.pixels = newSeq[Color]((xl.ceil.int) * (yl.ceil.int))
+  #result.img = PNG(w: xl.ceil.int, h: yl.ceil.int, pixels: data)
+  #TODO: pad width or inner width
+  result.realh = yl.ceil.int
+  result.realw = xl.ceil.int
+
   result.width = dx.int
   result.height = dy.int
+  
+  echo len(result.pixels)
+  echo result.realw, " ", result.realh
+
   result.origin = ( (abs(maxx)-abs(minx)).ceil.int, (abs(maxy)-abs(miny)).ceil.int )
+
   result.xaxis = (minx.floor.int, maxx.ceil.int)
   result.yaxis = (miny.floor.int, maxy.ceil.int)
 
@@ -186,6 +199,13 @@ iterator linsp*[T](fm,to,step:T):T =
     yield fm
     
 proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
+
+template plot*(x,y:openarray[float], lncolor:Color=Red, mode:PlotMode=Lines, scale:float=100,yscale:float=100, bgColor:Color = White) =
+  let srf = drawXY(x,y,lncolor, mode, scale,yscale, bgColor)
+  let pathto = currentSourcePath().changeFileExt(".png")
+  echo pathto
+  srf.saveSurfaceTo(pathto)
     
 
-when isMainModule: discard
+when isMainModule:
+  plot([0.0,1,2,3],[0.0,1,2,3])
