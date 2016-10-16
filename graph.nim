@@ -162,11 +162,8 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Black, mode:
     for i in 0..axis-1: sur[(scale*x[i]).int,(yscale*y[i]).int] = lncolor # HACK: trick with ^ to avoid flipping
   elif mode == Lines:
     for i in 0..axis-2: 
-      #cho sur.img.width, ".,.",sur.img.height
-      #cho scale*x[i], "::", scale*y[i], "::", scale*x[i+1], "::", scale*y[i+1]    
       sur.drawLine((scale*x[i]).int, (yscale*y[i]).int, (scale*x[i+1]).int, (yscale*y[i+1]).int, lncolor)
-    #sur.drawLine((scale*x[^2]).int, (scale*y[^2]).int, (scale*x[^1]).int, (scale*y[^1]).int, lncolor)
-
+    
 proc drawXY*(x,y:openarray[float], lncolor:Color=Black, mode:PlotMode=Dots, scale:float=1,yscale:float=1, bgColor:Color = White ):Surface =
   result = initSurface( scale*min(x), scale*max(x), yscale*min(y), yscale*max(y) )
 
@@ -198,9 +195,9 @@ iterator linsp*[T](fm,to,step:T):T =
   else:
     yield fm
     
-proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step))
+proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step)) # Result and step should be same type, not all 4
 
-template plot*(x,y:openarray[float], lncolor:Color=Red, mode:PlotMode=Lines, scale:float=100,yscale:float=100, bgColor:Color = White) =
+template plot*(x,y:openarray[float], lncolor:Color=Red, mode:PlotMode=Lines, scale:float=1,yscale:float=1, bgColor:Color = White) =
   let srf = drawXY(x,y,lncolor, mode, scale,yscale, bgColor)
   let pathto = currentSourcePath().changeFileExt(".png")
   #echo pathto

@@ -5,8 +5,9 @@ This is a toy plotting library, written in [nim](http://nim-lang.org) and based 
 The end goal is to have a tiny plotting lib to include in [inim](https://github.com/stisa/INim)  
 Outputs a `.png` file.
 
-A copy of [nimage](https://github.com/haldean/nimage) is required for this to work.
-Just clone it inside `graph` folder.  
+A copy of [npng](https://github.com/stisa/npng) is required for this to work.
+( Just clone npng and then run `nimble install` in npng folder )
+  
 Some examples:
 
 ### Example 1

@@ -9,3 +9,9 @@ license       = "MIT"
 # Dependencies
 
 requires "nim >= 0.14.0"
+
+task buildexamples, "Build examples":
+  withDir "examples":
+    exec("nim c -r example1.nim")
+    exec("nim c -r example2.nim")
+    exec("nim c -r example3.nim")
