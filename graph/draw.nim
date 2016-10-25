@@ -50,12 +50,24 @@ proc drawAxis*(sur: var Surface, step:float=1.0,color:Color=Black) =
   #  if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawLine(-1,y,1,y,color)
 
 proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
-  ## Plot array of points (x,y) with color `lncolor` and `scale`
+  ## Draw array of points (x,y) with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   let axis = if x.len>y.len: y.len else: x.len
   for i in 0..<axis-1: 
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
+proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White ):Surface =
+  ## Inits a surface and draws array points (x,y) to it. Returns the surface.
+  let xa = initAxis(min(x),max(x))
+  let ya = initAxis(min(y),max(y))
+  result = initSurface( xa,ya, 320,240 ) # TODO: dehardcode
+
+  result.fillWith(bgColor)
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  result.drawAxis()
+  result.drawFunc(x,y,lncolor)
+
 
 when isMainModule:
   from npng import nil
@@ -66,15 +78,8 @@ when isMainModule:
     var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
     npng.writeToFile(tmp,filename)
   
-  var x,y : Axis
-
-  x = initAxis(-3.14,3.14)
-  y = initAxis(-1.0,1.0)
-  var rt = initSurface( x,y,320,240 )
-
   let xx = linspace(-3.14,3.14,0.1)
-  rt.drawFunc(xx,sin(xx),Green)
-  rt.drawAxis()
+  var rt = plotXY(xx,sin(xx),Green)
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
