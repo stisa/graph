@@ -1,4 +1,5 @@
-import ../graph 
+import ../grapher
+import ../graph/draw,../graph/funcs,../graph/color
 import math,sequtils
 
 proc sin (x:openarray[float]):seq[float] =
@@ -10,7 +11,7 @@ proc cos (x:openarray[float]):seq[float] =
     cos(x)
 
 let xx = linspace(0.0, 2*Pi, 0.1)
-var srf = drawXY(xx,sin(xx),Blue,Lines,100,100)
-srf.drawFunc(xx,cos(xx), Purple,Lines,100,100)
+var srf = plotXY(xx,sin(xx),Blue)
+srf.drawFunc(xx,cos(xx), Purple)
 
 srf.saveSurfaceTo("example2.png")

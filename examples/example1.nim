@@ -1,11 +1,6 @@
-import ../graph
+import ../grapher
+import ../graph/funcs,../graph/color
 
-var srf = initSurface(-240,320,-240,240)
-srf.fillWith(White)
-srf.drawAxis(10)
-srf.drawLine(0,0,100,100,Red)
-srf.drawLine(0,0,-100,100,Green)
-srf.drawLine(0,0,100,-100,Blue)
-srf.drawLine(0,0,-100,-100,Purple)
-srf.drawLine(-100,100,100,100,Yellow)
+let xx = linspace(0.0,10,0.1)
+var srf = plotXY(xx,exp(xx),Red,White)
 srf.saveSurfaceTo("example1.png")
