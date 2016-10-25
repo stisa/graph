@@ -1,5 +1,6 @@
-import npng
+
 import sequtils,math
+from algorithm import fill
 
 type 
   Color* = uint32
@@ -65,10 +66,11 @@ proc `[]=`(sur: var Surface, x,y:float, color:Color) =
   sur[sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)] = color
 
 proc fillWith*(sur: var Surface,color:Color=White) =
-  ## Loop over every pixel in `img` and sets its color to `color` 
-  for pix in sur.pixels.mitems: pix = color 
+  ## Loop over every pixel in `img` and sets its color to `color`
+  sur.pixels.fill(color) 
+  #for pix in sur.pixels.mitems: pix = color 
 
-proc initAxis(v0,v1:float,p0,p1:int): Axis =
+proc initAxis(v0,v1:float,p0=0,p1:int=0): Axis =
   result.max = (v1,p1)
   result.min = (v0,p0)
 
@@ -77,13 +79,18 @@ proc initSurface(x,y:Axis) : Surface =
   result.y = y
   result.width = abs(x.max.pixel-x.min.pixel)+1 #wtf
   result.height = abs(y.max.pixel-y.min.pixel)+1
-  result.pixels = newSeq[Color](result.height*result.width)  
+  result.pixels = newSeq[Color](result.height*result.width)
+  result.fillWith(White)  
   #echo result.pixels.len
-
-proc saveSurfaceTo*(sur:Surface,filename:string) =
-  ## Convience function. Saves `img` into `filename`
-  var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
-  tmp.writeToFile(filename)
+proc initSurface(x,y:Axis,w,h:int) : Surface =
+  result.x = x
+  result.y = y
+  result.width = w#abs(x.max.pixel-x.min.pixel)+1 #wtf
+  result.height = h#abs(y.max.pixel-y.min.pixel)+1
+  result.x.max.pixel = w-1
+  result.y.min.pixel = h-1
+  result.pixels = newSeq[Color](result.height*result.width)
+  result.fillWith(White) 
 
 proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
   ## Draws a line between x1,y1 and x2,y2. Uses Bresenham's line algorithm.
@@ -125,17 +132,22 @@ proc drawLine*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Black) {.inli
   srf.drawLine(srf.x.pixelFromVal(x1),srf.y.pixelFromVal(y1),srf.x.pixelFromVal(x2),srf.y.pixelFromVal(y2), color)
 
 when isMainModule:
+  import npng
+
+  
+  proc saveSurfaceTo*(sur:Surface,filename:string) =
+    ## Convience function. Saves `img` into `filename`
+    var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
+    tmp.writeToFile(filename)
+  
   var x,y : Axis
 
-  x = initAxis(0.0,10.0,0,99)
-  y = initAxis(0.0,10.0,99,0)
-  var rt = initSurface( x,y )
+  x = initAxis(0.0,100.0)
+  y = initAxis(0.0,100.0)
+  var rt = initSurface( x,y,320,240 )
 
-  rt.fillWith(Yellow)
-  rt[0.0,0.0] = Black
-  rt[5.0,5.0] = Red
-  
-  rt.drawLine(0.0,0.0,5.0,5.0)
+  rt.drawLine(0.0,0.0,50.0,50.0)
+  rt.drawLine(50.0,50.0,100.0,0.0)
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
