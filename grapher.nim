@@ -4,6 +4,8 @@ import graph/plot
 import graph/draw
 import graph/funcs
 
+export linspace
+
 proc saveSurfaceTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
   var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
@@ -46,16 +48,6 @@ proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Colo
     fn(x)
   drawFunc(sur, x, yy, lncolor, mode, scale, yscale)
 ]#
-template plot*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White) =
-  let srf = plotXY(x,y,lncolor)
-  let pathto = currentSourcePath().changeFileExt(".png")
-  #echo pathto
-  srf.saveSurfaceTo(pathto)
-    
-
-when isMainModule:
-  plot([0.0,1,2,3],[0.0,1,2,3])
-
 
 #[when isMainModule:
   var rt = initSurface( 0,10,0,10 )

@@ -16,7 +16,3 @@ Some examples:
 
 ### Example 2
 ![sines](examples/example2.png)
-
-
-### Example 3
-![logs](examples/example3.png)
