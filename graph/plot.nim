@@ -7,15 +7,15 @@ type
   Axis* = object
     max*: tuple[val:float,pixel:int]
     min*: tuple[val:float,pixel:int]
-    #origin: tuple[val,pixel:int]
+    origin: float#tuple[val,pixel:int]
 
   Surface* = object
     width*: int
     height*: int
     x*: Axis
     y*: Axis
-    #origin: tuple[x0,y0:int]
-    pixels: seq[Color]
+    origin*: tuple[x0,y0:float]
+    pixels*: seq[Color]
     #pixelsize: int
     
 const
@@ -35,16 +35,7 @@ const
   HalftWhite* = Color(0xFFFFFF88)
   
 proc pixelFromVal*(a:Axis,val:float):int =
-  when defined debug:
-    echo "start pp"
-    echo "val",val
-    echo (val - a.min.val)
-    echo (a.max.val-a.min.val)
-    echo (a.max.pixel-a.min.pixel)
-    echo a.min.pixel
-    echo (((val - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float)
-    echo "end pp"
-  result = (((val - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
+  result = ((( (val) - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
 
 proc `[]`*(sur:Surface, i,j:int):Color =
   ## x: position along the horizontal axis
@@ -70,9 +61,10 @@ proc fillWith*(sur: var Surface,color:Color=White) =
   sur.pixels.fill(color) 
   #for pix in sur.pixels.mitems: pix = color 
 
-proc initAxis*(v0,v1:float,p0=0,p1:int=0): Axis =
+proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=0): Axis =
   result.max = (v1,p1)
   result.min = (v0,p0)
+  result.origin = origin
 
 proc initSurface*(x,y:Axis) : Surface =
   result.x = x
@@ -80,6 +72,7 @@ proc initSurface*(x,y:Axis) : Surface =
   result.width = abs(x.max.pixel-x.min.pixel)+1 #wtf
   result.height = abs(y.max.pixel-y.min.pixel)+1
   result.pixels = newSeq[Color](result.height*result.width)
+  result.origin = (x.origin,y.origin)
   result.fillWith(White)  
   #echo result.pixels.len
 proc initSurface*(x,y:Axis,w,h:int) : Surface =
@@ -90,6 +83,7 @@ proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.x.max.pixel = w-1
   result.y.min.pixel = h-1
   result.pixels = newSeq[Color](result.height*result.width)
+  result.origin = (x.origin,y.origin)
   result.fillWith(White) 
 
 when isMainModule:
