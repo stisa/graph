@@ -49,23 +49,31 @@ proc drawAxis*(sur: var Surface, step:float=1.0,color:Color=Black) =
   #for y in countup(sur.yaxis.min,sur.yaxis.max,step):
   #  if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawLine(-1,y,1,y,color)
 
-when isMainModule:
-  import npng
-
+proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
+  ## Plot array of points (x,y) with color `lncolor` and `scale`
+  # TODO: have a switch to use antialiased lines
+  let axis = if x.len>y.len: y.len else: x.len
+  for i in 0..<axis-1: 
+    sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
+
+when isMainModule:
+  from npng import nil
+  import funcs
+
   proc saveSurfaceTo*(sur:Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
     var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
-    tmp.writeToFile(filename)
+    npng.writeToFile(tmp,filename)
   
   var x,y : Axis
 
-  x = initAxis(-10.0,100.0)
-  y = initAxis(-10.0,100.0)
+  x = initAxis(-3.14,3.14)
+  y = initAxis(-1.0,1.0)
   var rt = initSurface( x,y,320,240 )
 
-  rt.line(0.0,0.0,50.0,50.0)
-  rt.line(50.0,50.0,100.0,0.0)
+  let xx = linspace(-3.14,3.14,0.1)
+  rt.drawFunc(xx,sin(xx),Green)
   rt.drawAxis()
   
   ## Plot x,y with color `lncolor` and `scale`
