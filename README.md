@@ -8,7 +8,7 @@ Outputs a `.png` file.
 A copy of [npng](https://github.com/stisa/npng) is required for this to work.
 ( Just clone npng and then run `nimble install` in npng folder )
   
-Some examples:
+Some examples are inside [examples](examples):
 
 ### Example 1
 ![lines](examples/example1.png)
