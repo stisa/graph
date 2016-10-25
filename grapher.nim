@@ -4,14 +4,14 @@ import graph/plot
 import graph/draw
 import graph/funcs
 
-export linspace
+export linspace,plotXY
 
 proc saveSurfaceTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
   var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
   npng.writeToFile(tmp,filename)
   
-proc flipX(srf:var Surface) =
+proc flipX*(srf:var Surface) =
 # TODO: swap
   for c in 0..srf.width-1:
     for r in 0..floor((srf.height-1)/2).int :

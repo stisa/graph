@@ -1,5 +1,5 @@
 import ../grapher
-import ../graph/draw,../graph/funcs,../graph/colors
+import ../graph/funcs,../graph/colors
 
 let xx = linspace(0.0,10,0.1)
 var srf = plotXY(xx,exp(xx),Red,White)

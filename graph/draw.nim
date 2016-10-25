@@ -1,4 +1,4 @@
-import plot
+import plot,colors
 from sequtils import map
 
 proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
