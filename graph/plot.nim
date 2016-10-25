@@ -41,9 +41,13 @@ proc `[]`*(sur:Surface, i,j:int):Color =
   ## x: position along the horizontal axis
   ## y: position along the vertical axis
   ## IN PIXEL
+  if i > sur.height or i < 0: return
+  if j > sur.width or j < 0: return
   result = sur.pixels[i*(sur.width)+j]
 
 proc `[]=`*(sur: var Surface, i,j:int, color:Color) =  
+  if i > sur.height or i < 0: return
+  if j > sur.width or j < 0: return
   sur.pixels[i*(sur.width)+j] = color
 
 proc `[]`*(sur:Surface, x,y:float):Color =
@@ -73,8 +77,8 @@ proc initSurface*(x,y:Axis) : Surface =
   result.height = abs(y.max.pixel-y.min.pixel)+1
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (x.origin,y.origin)
-  result.fillWith(White)  
-  #echo result.pixels.len
+  result.fillWith(White)
+
 proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.x = x
   result.y = y

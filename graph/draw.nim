@@ -14,7 +14,6 @@ proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
 
   var xi = x1
   var yi = y1
-
   srf[yi,xi] = color
   
   if dx>=dy:
@@ -38,7 +37,9 @@ proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
       srf[yi,xi] = color
 
 proc line*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Red) {.inline.} =
-  srf.bresline(srf.x.pixelFromVal(x1),srf.y.pixelFromVal(y1),srf.x.pixelFromVal(x2),srf.y.pixelFromVal(y2), color)
+
+  srf.bresline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
+              srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), color)
 
 proc drawAxis*(sur: var Surface, step:float=1.0,color:Color=Black) =
   sur.line(sur.x.min.val,sur.origin.y0,sur.x.max.val,sur.origin.y0,color)
@@ -57,10 +58,11 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   for i in 0..<axis-1: 
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
-proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White ):Surface =
+proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White, origin:tuple[x0,y0:float]=(0.0,0.0)):Surface =
   ## Inits a surface and draws array points (x,y) to it. Returns the surface.
-  let xa = initAxis(min(x),max(x))
-  let ya = initAxis(min(y),max(y))
+  let xa = initAxis(min(x),max(x),origin.x0)
+  let ya = initAxis(min(y),max(y),origin.y0)
+
   result = initSurface( xa,ya, 320,240 ) # TODO: dehardcode
 
   result.fillWith(bgColor)
@@ -87,7 +89,7 @@ when isMainModule:
     npng.writeToFile(tmp,filename)
   
   let xx = linspace(-3.14,3.14,0.1)
-  var rt = plotXY(xx,sin(xx),Green)
+  var rt = plotXY(xx,sin(xx),Green,White,(0.0,0.0))
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
