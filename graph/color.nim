@@ -16,4 +16,10 @@ const
   HalfTGreen* = Color(0x00FF0088)
   HalfTRed* = Color(0xFF000088)
   HalftWhite* = Color(0xFFFFFF88)
+
+proc color ( r,g,b,a:int=0) :Color=
+  result = (r shl 24+g shl 16+b shl 8+a).uint32
+
+when isMainModule:
+  assert(color(255,000,000,255) == Red)
   

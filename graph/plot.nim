@@ -1,4 +1,4 @@
-import colors
+import color
 import sequtils,math
 #from algorithm import fill
 
