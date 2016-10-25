@@ -5,18 +5,18 @@ from algorithm import fill
 type 
   Color* = uint32
   Axis* = object
-    max: tuple[val:float,pixel:int]
-    min: tuple[val:float,pixel:int]
-    origin: tuple[val,pixel:int]
+    max*: tuple[val:float,pixel:int]
+    min*: tuple[val:float,pixel:int]
+    #origin: tuple[val,pixel:int]
 
   Surface* = object
-    width: int
-    height: int
-    x: Axis
-    y: Axis
-    origin: tuple[x0,y0:int]
+    width*: int
+    height*: int
+    x*: Axis
+    y*: Axis
+    #origin: tuple[x0,y0:int]
     pixels: seq[Color]
-    pixelsize: int
+    #pixelsize: int
     
 const
   ## Common colors used for testing
@@ -34,7 +34,7 @@ const
   HalfTRed* = Color(0xFF000088)
   HalftWhite* = Color(0xFFFFFF88)
   
-proc pixelFromVal(a:Axis,val:float):int =
+proc pixelFromVal*(a:Axis,val:float):int =
   when defined debug:
     echo "start pp"
     echo "val",val
@@ -46,22 +46,22 @@ proc pixelFromVal(a:Axis,val:float):int =
     echo "end pp"
   result = (((val - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
 
-proc `[]`(sur:Surface, i,j:int):Color =
+proc `[]`*(sur:Surface, i,j:int):Color =
   ## x: position along the horizontal axis
   ## y: position along the vertical axis
   ## IN PIXEL
   result = sur.pixels[i*(sur.width)+j]
 
-proc `[]=`(sur: var Surface, i,j:int, color:Color) =  
+proc `[]=`*(sur: var Surface, i,j:int, color:Color) =  
   sur.pixels[i*(sur.width)+j] = color
 
-proc `[]`(sur:Surface, x,y:float):Color =
+proc `[]`*(sur:Surface, x,y:float):Color =
   ## x: position along the horizontal axis
   ## y: position along the vertical axis
   ## VALUES NOT IN PIXEL
   result = sur[sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)]
 
-proc `[]=`(sur: var Surface, x,y:float, color:Color) =
+proc `[]=`*(sur: var Surface, x,y:float, color:Color) =
   echo sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)
   sur[sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)] = color
 
@@ -70,11 +70,11 @@ proc fillWith*(sur: var Surface,color:Color=White) =
   sur.pixels.fill(color) 
   #for pix in sur.pixels.mitems: pix = color 
 
-proc initAxis(v0,v1:float,p0=0,p1:int=0): Axis =
+proc initAxis*(v0,v1:float,p0=0,p1:int=0): Axis =
   result.max = (v1,p1)
   result.min = (v0,p0)
 
-proc initSurface(x,y:Axis) : Surface =
+proc initSurface*(x,y:Axis) : Surface =
   result.x = x
   result.y = y
   result.width = abs(x.max.pixel-x.min.pixel)+1 #wtf
@@ -82,7 +82,7 @@ proc initSurface(x,y:Axis) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.fillWith(White)  
   #echo result.pixels.len
-proc initSurface(x,y:Axis,w,h:int) : Surface =
+proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.x = x
   result.y = y
   result.width = w#abs(x.max.pixel-x.min.pixel)+1 #wtf
@@ -92,47 +92,8 @@ proc initSurface(x,y:Axis,w,h:int) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.fillWith(White) 
 
-proc drawLine*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Black) =
-  ## Draws a line between x1,y1 and x2,y2. Uses Bresenham's line algorithm.
-  var dx = x2-x1
-  var dy = y2-y1
-  
-  let ix = if dx > 0 : 1 elif dx<0 : -1 else: 0
-  let iy = if dy > 0 : 1 elif dy<0 : -1 else: 0
-
-  dx = abs(dx) shl 1
-  dy = abs(dy) shl 1
-
-  var xi = x1
-  var yi = y1
-
-  srf[yi,xi] = color
-  
-  if dx>=dy:
-    var err = dy-(dx shr 1)
-    while xi != x2:
-      if (err >= 0):
-        err -= dx
-        yi+=iy
-      
-      err += dy
-      xi += ix
-      srf[yi,xi] = color
-  else:
-    var err = dx - (dy shr 1)
-    while yi!=y2:
-      if err >= 0:
-        err -= dy
-        xi += ix
-      err += dx
-      yi += iy
-      srf[yi,xi] = color
-
-proc drawLine*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Black) {.inline.} =
-  srf.drawLine(srf.x.pixelFromVal(x1),srf.y.pixelFromVal(y1),srf.x.pixelFromVal(x2),srf.y.pixelFromVal(y2), color)
-
 when isMainModule:
-  import npng
+  import npng,draw
 
   
   proc saveSurfaceTo*(sur:Surface,filename:string) =
@@ -146,8 +107,8 @@ when isMainModule:
   y = initAxis(0.0,100.0)
   var rt = initSurface( x,y,320,240 )
 
-  rt.drawLine(0.0,0.0,50.0,50.0)
-  rt.drawLine(50.0,50.0,100.0,0.0)
+  rt.line(0.0,0.0,50.0,50.0)
+  rt.line(50.0,50.0,100.0,0.0)
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
