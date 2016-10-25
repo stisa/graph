@@ -20,4 +20,8 @@ proc linspace* [T](fm,to,step:T):seq[T] = toSeq(linsp(fm, to, step)) # Result an
 proc sin*(a:openarray[float]):seq[float] =
   result = newSeq[float](a.len)
   for i,r in result.mpairs : r = sin(a[i])  
+
+proc exp*(a:openarray[float]):seq[float] =
+  result = newSeq[float](a.len)
+  for i,r in result.mpairs : r = exp(a[i])  
   

@@ -1,6 +1,6 @@
 
 import sequtils,math
-from algorithm import fill
+#from algorithm import fill
 
 type 
   Color* = uint32
@@ -41,13 +41,13 @@ proc `[]`*(sur:Surface, i,j:int):Color =
   ## x: position along the horizontal axis
   ## y: position along the vertical axis
   ## IN PIXEL
-  if i > sur.height or i < 0: return
-  if j > sur.width or j < 0: return
+  if i >= sur.height or i < 0: return
+  if j >= sur.width or j < 0: return
   result = sur.pixels[i*(sur.width)+j]
 
 proc `[]=`*(sur: var Surface, i,j:int, color:Color) =  
-  if i > sur.height or i < 0: return
-  if j > sur.width or j < 0: return
+  if i >= sur.height or i < 0: return
+  if j >= sur.width or j < 0: return
   sur.pixels[i*(sur.width)+j] = color
 
 proc `[]`*(sur:Surface, x,y:float):Color =
@@ -62,8 +62,8 @@ proc `[]=`*(sur: var Surface, x,y:float, color:Color) =
 
 proc fillWith*(sur: var Surface,color:Color=White) =
   ## Loop over every pixel in `img` and sets its color to `color`
-  sur.pixels.fill(color) 
-  #for pix in sur.pixels.mitems: pix = color 
+  #sur.pixels.fill(color) 
+  for pix in sur.pixels.mitems: pix = color 
 
 proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=0): Axis =
   result.max = (v1,p1)

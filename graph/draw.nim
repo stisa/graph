@@ -41,15 +41,32 @@ proc line*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Red) {.inline.} =
   srf.bresline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
               srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), color)
 
-proc drawAxis*(sur: var Surface, step:float=1.0,color:Color=Black) =
+proc drawTicks(sur:var Surface,color:Color=Black,every:float=10.0,yevery:float=10.0) =
+  # every is a percentage of the width/height
+  var ticks = int(float(sur.x.max.pixel-sur.x.min.pixel)/every)
+  var last_at = 0.0
+  var ticksize = abs((sur.y.max.val-sur.y.min.val)/float(sur.y.min.pixel-sur.y.max.pixel))*3
+  var span = sur.x.max.val-sur.x.min.val
+
+  for i in 1..<ticks:
+    sur.line(last_at,sur.origin.y0-ticksize,last_at,sur.origin.y0+ticksize,color)
+    last_at+=(span/every)
+  
+  ticksize = abs((sur.x.max.val-sur.x.min.val)/float(sur.x.max.pixel-sur.x.min.pixel))*3
+  let yev = if yevery!=every: yevery else: every   
+  ticks = int(float(sur.y.min.pixel-sur.y.max.pixel)/yev)
+  span = sur.y.max.val-sur.y.min.val
+  last_at = 0.0
+
+  for i in 1..<ticks:
+    sur.line(sur.origin.x0-ticksize,last_at,sur.origin.x0+ticksize,last_at,color)
+    last_at+=(span/yev)
+
+proc drawAxis*(sur: var Surface, tickperc,ytickprc:float=10.0,color:Color=Black) =
   sur.line(sur.x.min.val,sur.origin.y0,sur.x.max.val,sur.origin.y0,color)
   sur.line(sur.origin.x0,sur.y.min.val,sur.origin.x0,sur.y.max.val,color)
-
-  # TODO: draw tick
-  #for x in countup(sur.xaxis.min,sur.xaxis.max,step):
-  #  if x != sur.xaxis.min and x != sur.xaxis.max : sur.drawLine(x,-1,x,1,color)
-  #for y in countup(sur.yaxis.min,sur.yaxis.max,step):
-  #  if y != sur.yaxis.min and y != sur.yaxis.max : sur.drawLine(-1,y,1,y,color)
+  let ystep = if ytickprc!=tickperc : ytickprc else: tickperc
+  sur.drawTicks(color,tickperc,ystep)
 
 proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   ## Draw array of points (x,y) with color `lncolor` and `scale`
@@ -88,8 +105,8 @@ when isMainModule:
     var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
     npng.writeToFile(tmp,filename)
   
-  let xx = linspace(-3.14,3.14,0.1)
-  var rt = plotXY(xx,sin(xx),Green,White,(0.0,0.0))
+  let xx = linspace(0.0,10,0.1)
+  var rt = plotXY(xx,exp(xx),Red,White)
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
