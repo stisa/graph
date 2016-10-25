@@ -68,6 +68,13 @@ proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White ):Su
   result.drawAxis()
   result.drawFunc(x,y,lncolor)
 
+proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]):openarray[T], lncolor:Color=Red) {.inline.} =
+  drawFunc(sur,x,fn(x),lncolor)
+
+proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Color=Red) =
+  let yy = map(x) do (x:T)->T:
+    fn(x)
+  drawFunc(sur, x, yy, lncolor)
 
 when isMainModule:
   from npng import nil
