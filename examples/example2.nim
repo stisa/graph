@@ -1,5 +1,5 @@
 import ../grapher
-import ../graph/draw,../graph/funcs,../graph/colors
+import ../graph/draw,../graph/funcs,../graph/color
 import math,sequtils
 
 proc sin (x:openarray[float]):seq[float] =
