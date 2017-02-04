@@ -14,4 +14,4 @@ let xx = linspace(0.0, 2*Pi, 0.1)
 var srf = plotXY(xx,sin(xx),Blue)
 srf.drawFunc(xx,cos(xx), Purple)
 
-srf.saveSurfaceTo("example2.png")
+srf.saveTo("example2.png")

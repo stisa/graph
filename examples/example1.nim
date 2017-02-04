@@ -3,4 +3,4 @@ import ../graph/funcs,../graph/color
 
 let xx = linspace(0.0,10,0.1)
 var srf = plotXY(xx,exp(xx),Red,White)
-srf.saveSurfaceTo("example1.png")
+srf.saveTo("example1.png")

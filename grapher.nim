@@ -1,4 +1,4 @@
-from npng import nil
+import nimPNG
 import sequtils,math, os
 import graph/plot
 import graph/draw
@@ -6,10 +6,11 @@ import graph/funcs
 
 export linspace,plotXY
 
-proc saveSurfaceTo*(sur:Surface,filename:string) =
+proc saveTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
-  var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
-  npng.writeToFile(tmp,filename)
+  var px = ""
+  for p in sur.pixels: px.add($p)
+  discard savepng32(filename,px,sur.width,sur.height)
   
 proc flipX*(srf:var Surface) =
 # TODO: swap
@@ -56,4 +57,4 @@ proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Colo
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   rt.drawLine(0,0,5,5,Red)
-  rt.saveSurfaceTo("test.png")]#
+  rt.saveTo("test.png")]#

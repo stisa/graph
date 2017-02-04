@@ -7,7 +7,7 @@ license       = "MIT"
 
 
 # Dependencies
-
+requires "nimPN
 requires "nim >= 0.14.0"
 
 task buildexamples, "Build examples":

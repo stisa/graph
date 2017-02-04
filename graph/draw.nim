@@ -97,13 +97,15 @@ proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Colo
   drawFunc(sur, x, yy, lncolor)
 
 when isMainModule:
-  from npng import nil
+  import nimPNG
   import funcs
 
-  proc saveSurfaceTo*(sur:Surface,filename:string) =
+  proc saveTo*(sur:Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
-    var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
-    npng.writeToFile(tmp,filename)
+    var d=""
+    for e in sur.pixels:
+      d.add($e)
+    discard savepng32(filename,d,sur.width,sur.height)
   
   let xx = linspace(0.0,10,0.1)
   var rt = plotXY(xx,exp(xx),Red,White)
@@ -111,4 +113,4 @@ when isMainModule:
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   #rt.drawLine(0,0,5,5,Red)
-  rt.saveSurfaceTo("tplot.png")
+  rt.saveTo("tplot.png")

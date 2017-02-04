@@ -74,12 +74,14 @@ proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.fillWith(White) 
 
 when isMainModule:
-  import npng,draw
+  import nimPNG,draw
 
   
-  proc saveSurfaceTo*(sur:Surface,filename:string) =
+  proc saveTo*(sur:Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
-    var tmp = npng.initPNG(sur.width,sur.height,sur.pixels)
+    var d = ""
+    for e in sur.pixels: d.add($e)
+    savepng32(d,sur.width,sur.height)
     tmp.writeToFile(filename)
   
   var x,y : Axis
@@ -94,4 +96,4 @@ when isMainModule:
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   #rt.drawLine(0,0,5,5,Red)
-  rt.saveSurfaceTo("tplot.png")
+  rt.saveTo("tplot.png")
