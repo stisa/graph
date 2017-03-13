@@ -3,15 +3,16 @@ import sequtils,math, os
 import graph/plot
 import graph/draw
 import graph/funcs
+import graph/color
 
-export linspace,plotXY
+export linspace,plotXY,color
 
 proc saveTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
   var px = ""
   for p in sur.pixels: px.add($p)
-  discard savepng32(filename,px,sur.width,sur.height)
-  
+  if not savepng32(filename,px,sur.width,sur.height): assert(false,"Error saving")
+
 proc flipX*(srf:var Surface) =
 # TODO: swap
   for c in 0..srf.width-1:
@@ -50,11 +51,12 @@ proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Colo
   drawFunc(sur, x, yy, lncolor, mode, scale, yscale)
 ]#
 
-#[when isMainModule:
+when isMainModule:
+  import graph/color,graph/draw
   var rt = initSurface( 0,10,0,10 )
 
   rt.fillWith(Yellow)
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
-  rt.drawLine(0,0,5,5,Red)
-  rt.saveTo("test.png")]#
+  #rt.line(0,0,5,5,Red)
+  rt.saveTo("test.png")

@@ -1,4 +1,4 @@
-import color
+import ./color
 import sequtils,math
 #from algorithm import fill
 
@@ -40,13 +40,13 @@ proc `[]`*(sur:Surface, x,y:float):Color =
   result = sur[sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)]
 
 proc `[]=`*(sur: var Surface, x,y:float, color:Color) =
-  echo sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)
+  #echo sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)
   sur[sur.y.pixelFromVal(y),sur.x.pixelFromVal(x)] = color
 
 proc fillWith*(sur: var Surface,color:Color=White) =
   ## Loop over every pixel in `img` and sets its color to `color`
   #sur.pixels.fill(color) 
-  for pix in sur.pixels.mitems: pix = color 
+  for pix in sur.pixels.mitems: pix = Color(color)
 
 proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=0): Axis =
   result.max = (v1,p1)
@@ -73,6 +73,17 @@ proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.origin = (x.origin,y.origin)
   result.fillWith(White) 
 
+proc initSurface*(x0,w,y0,h:int) : Surface =
+  result.x = initAxis(x0.float,w.float)
+  result.y = initAxis(y0.float,h.float)
+  result.width = w#abs(x.max.pixel-x.min.pixel)+1 #wtf
+  result.height = h#abs(y.max.pixel-y.min.pixel)+1
+  result.x.max.pixel = w-1
+  result.y.min.pixel = h-1
+  result.pixels = newSeq[Color](result.height*result.width)
+  result.origin = (result.x.origin,result.y.origin)
+  result.fillWith(White) 
+  
 when isMainModule:
   import nimPNG,draw
 
@@ -81,8 +92,7 @@ when isMainModule:
     ## Convience function. Saves `img` into `filename`
     var d = ""
     for e in sur.pixels: d.add($e)
-    savepng32(d,sur.width,sur.height)
-    tmp.writeToFile(filename)
+    discard savepng32(filename,d,sur.width,sur.height)
   
   var x,y : Axis
 

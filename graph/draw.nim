@@ -1,4 +1,4 @@
-import plot,color
+import plot,./color
 from sequtils import map
 
 proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
@@ -113,4 +113,4 @@ when isMainModule:
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   #rt.drawLine(0,0,5,5,Red)
-  rt.saveTo("tplot.png")
+  rt.saveTo("tdraw.png")

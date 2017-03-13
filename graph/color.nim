@@ -22,12 +22,14 @@ proc color ( r,g,b,a:int=0) :Color=
 
 
 proc `$`*(c:Color):string =
-  result = "    "
+  result = ""
+  result.setLen(4)
+
   result[0] = cast[uint8](c shr 24).char
   result[1] = cast[uint8](c shr 16).char
   result[2] = cast[uint8](c shr 8).char
   result[3] = cast[uint8](c shr 0).char
-
+  
 when isMainModule:
   assert(color(255,000,000,255) == Red)
   
