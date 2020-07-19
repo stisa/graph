@@ -1,8 +1,8 @@
 Graph
 =====
 
-This is a toy plotting library, written in [nim](http://nim-lang.org) and based on nimage.  
-The end goal is to have a tiny plotting lib to include in [inim](https://github.com/stisa/INim)  
+This is a basic plotting library, written in [nim](http://nim-lang.org) and based on nimage.  
+The end goal is to have a tiny plotting lib to include in [jupyternim](https://github.com/stisa/jupyternim)  
 Outputs a `.png` file.
   
 Some examples are inside [examples](examples):
@@ -10,7 +10,7 @@ Some examples are inside [examples](examples):
 ### Example 1
 ![lines](examples/example1.png)
 ```nim
-import grapher
+import graph
 from graph/funcs import exp
 
 let xx = linspace(0.0,10,0.1)
@@ -22,7 +22,7 @@ srf.saveTo("example1.png")
 
 ![sines](examples/example2.png)
 ```nim
-import grapher, 
+import graph, 
        graph/draw, # Exposes drawFunc
        graph/funcs # Exposes sin, cos, linspace
 import math,sequtils
@@ -49,7 +49,7 @@ proc ln(x:seq[float]):seq[float] =
 ```
 
 ## Current structure
-- **grapher**: exposes linspace, plotXY and saveSurfaceTo ( basic functionality )
+- **graph**: exposes linspace, plotXY and saveSurfaceTo ( basic functionality )
 
 Inside `graph` there are specific apis:
 - color: exposes various colours and the proc `color(r,g,b,a)`
