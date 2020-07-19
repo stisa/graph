@@ -1,10 +1,11 @@
 # Package
 
-version       = "0.2.0"
-author        = "Stisa"
-description   = "Toy plotting library for Nim"
+version       = "0.3.0"
+author        = "stisa"
+description   = "Beginning of a 2D plotting library for Nim"
 license       = "MIT"
 
+srcDir = "src"
 
 # Dependencies
 requires "nimPNG"
