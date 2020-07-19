@@ -68,18 +68,19 @@ proc initSurface*(x,y:Axis,w,h:int) : Surface =
   result.width = w#abs(x.max.pixel-x.min.pixel)+1 #wtf
   result.height = h#abs(y.max.pixel-y.min.pixel)+1
   result.x.max.pixel = w-1
-  result.y.min.pixel = h-1
+  result.y.max.pixel = h-1
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (x.origin,y.origin)
   result.fillWith(White) 
 
 proc initSurface*(x0,w,y0,h:int) : Surface =
-  result.x = initAxis(x0.float,w.float)
-  result.y = initAxis(y0.float,h.float)
-  result.width = w#abs(x.max.pixel-x.min.pixel)+1 #wtf
-  result.height = h#abs(y.max.pixel-y.min.pixel)+1
-  result.x.max.pixel = w-1
-  result.y.min.pixel = h-1
+  let pad = 5
+  result.x = initAxis(x0.float,w.float, 0.0, pad, w+pad)
+  result.y = initAxis(y0.float,h.float, 0.0, pad, h+pad)
+  result.width = w+2*pad#abs(x.max.pixel-x.min.pixel)+1 #wtf
+  result.height = h+2*pad#abs(y.max.pixel-y.min.pixel)+1
+  #result.x.max.pixel = w-1
+  #result.y.max.pixel = h-1
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (result.x.origin,result.y.origin)
   result.fillWith(White) 
