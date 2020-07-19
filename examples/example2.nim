@@ -1,5 +1,5 @@
-import ../grapher
-import ../graph/draw,../graph/funcs
+import ../src/graph
+import ../src/graph/draw,../src/graph/funcs
 import math,sequtils
 
 let xx = linspace(0.0, 2*Pi, 0.1) 

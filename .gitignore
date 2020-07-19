@@ -1,4 +1,11 @@
-nimcache
+# ignore files with no extention:
+*
+!*/
+!*.*
+
+# normal ignores:
 *.exe
-nimage
-nimsuggest.log
+nimcache
+*.pdb
+*.ilk
+.*
