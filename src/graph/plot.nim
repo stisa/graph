@@ -13,6 +13,7 @@ type
     height*: int
     x*: Axis
     y*: Axis
+    ratio: float
     origin*: tuple[x0,y0:float]
     pixels*: seq[Color]
     #pixelsize: int
@@ -21,8 +22,8 @@ proc pixelFromVal*(a:Axis,val:float):int =
   result = ((( (val) - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
 
 proc `[]`*(sur:Surface, i,j:int):Color =
-  ## x: position along the horizontal axis
-  ## y: position along the vertical axis
+  ## j: position along the horizontal axis
+  ## i: position along the vertical axis
   ## IN PIXEL
   if i >= sur.height or i < 0: return
   if j >= sur.width or j < 0: return

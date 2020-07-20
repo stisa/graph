@@ -1,5 +1,6 @@
 import plot,./color
 from sequtils import map
+import math
 
 proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
   ## Draws a line between x1,y1 and x2,y2. Uses Bresenham's line algorithm.
@@ -36,10 +37,60 @@ proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
       yi += iy
       srf[yi,xi] = color
 
+proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = Red) =
+  ## Anti aliased thick line with a modified bresenham line algorithm
+  ## see http://members.chello.at/easyfilter/bresenham.html
+  var 
+    dx = abs(x1-x0)
+    dy = abs(y1-y0)
+    sx = if x0<x1: 1 else: -1
+    sy = if y0<y1: 1 else: -1
+    err = dx-dy  
+    ed = if dx+dy == 0: 1.0 else: sqrt((dx * dx + dy * dy).float)
+    e2, x2, y2: int
+  
+  var 
+    hfw = 0.5*(1+w) # half the width
+    xi = x0
+    yi = y0
+  while true:
+    var ap = 255-(255*(abs(err-dx+dy).float / ed - hfw + 1)).int
+    #echo "first ", ap
+    srf[xi,yi] = color.withAlpha(max(0, ap))
+    e2 = err
+    x2 = xi
+    if(2*e2 >= -dx):
+      e2 += dy
+      y2 = yi
+      while e2.float < ed*w and (y1 != y2 or dx > dy):
+        y2 += sy
+        ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
+        #echo "second ", ap
+        srf[xi, y2] = color.withAlpha(max(0, ap))
+        e2 += dx
+      
+      if(xi==x1): break
+      e2 = err
+      err -= dy
+      xi += sx
+    
+    if(2*e2 <= dy):
+      e2 = dx-e2
+      while e2.float < ed*w and (x1 != x2 or dx < dy):
+        x2 += sx
+        ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
+        #echo "third ", ap
+        srf[x2, yi] = color.withAlpha(max(0, ap))
+        e2 += dy
+    
+      if(yi==y1): break
+      err += dx
+      yi += sy
+
 proc line*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Red) {.inline.} =
 
-  srf.bresline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
-              srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), color)
+  srf.aaline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
+              srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), 1.0, color)
 
 proc drawTicks(sur:var Surface,color:Color=Black,every:float=10.0,yevery:float=10.0) =
   # every is a percentage of the width/height
@@ -107,10 +158,13 @@ when isMainModule:
       d.add($e)
     discard savepng32(filename,d,sur.width,sur.height)
   
-  let xx = linspace(0.0,10,0.1)
-  var rt = plotXY(xx,exp(xx),Red,White)
-  
+  #let xx = linspace(0.0,10,0.1)
+  # var rt = plotXY(xx,exp(xx),Red,White)
+  var srf = initSurface( 0, 320, 0, 240 ) # TODO: dehardcode
+  srf.fillWith(White)
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use antialiased lines
   #rt.drawLine(0,0,5,5,Red)
-  rt.saveTo("tdraw.png")
+  srf.bresline(0,0, 60, 60, Red)
+  srf.aaline(0,60, 60, 120, 1.0, Blue)
+  srf.saveTo("tdraw.png")
