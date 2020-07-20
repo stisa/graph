@@ -1,5 +1,5 @@
 import nimPNG
-import sequtils,math, os
+import math
 import graph/plot
 import graph/draw
 import graph/funcs

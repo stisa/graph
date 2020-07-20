@@ -1,6 +1,4 @@
 import ./color
-import sequtils,math
-#from algorithm import fill
 
 type 
   Axis* = object

@@ -22,10 +22,10 @@ srf.saveTo("example1.png")
 
 ![sines](examples/example2.png)
 ```nim
-import graph, 
-       graph/draw, # Exposes drawFunc
-       graph/funcs # Exposes sin, cos, linspace
-import math,sequtils
+import graph,
+       graph/draw,
+       graph/funcs # has the sin(openarray):openarray def
+import math
 
 let xx = linspace(0.0, 2*Pi, 0.1) 
 
@@ -34,6 +34,9 @@ var srf = plotXY(xx,sin(xx),Blue)
 
 # Draw a cos over the surface
 srf.drawFunc(xx,cos(xx), Purple)
+
+# Pass the proc (eg ``sin``) to be mapped to xx so that yy=sin(xx)
+srf.plotProc(xx, sin, Green)
 
 # Save to file
 srf.saveTo("example2.png")
@@ -47,6 +50,8 @@ import math,sequtils
 proc ln(x:seq[float]):seq[float] =
   x.mapit(ln(it))
 ```
+Alternatively, if you have a map `proc(T)->T`, you can just use
+`plotProc`, see [example2](examples/example2.nim)
 
 ## Current structure
 - **graph**: exposes linspace, plotXY and saveSurfaceTo ( basic functionality )
