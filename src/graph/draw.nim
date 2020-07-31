@@ -121,7 +121,7 @@ proc drawAxis*(sur: var Surface, tickperc,ytickprc:float=10.0,color:Color=Black)
 
 proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   ## Draw array of points (x,y) with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
+  # TODO: have a switch to use non antialiased lines
   let axis = if x.len>y.len: y.len else: x.len
   for i in 0..<axis-1: 
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
@@ -131,11 +131,11 @@ proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White, ori
   let xa = initAxis(min(x),max(x),origin.x0)
   let ya = initAxis(min(y),max(y),origin.y0)
 
-  result = initSurface( xa,ya, 320,240 ) # TODO: dehardcode
+  result = initSurface( xa,ya, 640,480 ) # TODO: dehardcode
 
   result.fillWith(bgColor)
   ## Plot x,y with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
+  # TODO: have a switch to use non antialiased lines
   result.drawAxis()
   result.drawFunc(x,y,lncolor)
 

@@ -61,3 +61,10 @@ Inside `graph` there are specific apis:
 - draw: drawing, so `line(x,y,x1,y1,color)`, functions to draw Axis, procs, etc
 - plot: the implementation of `Surface` and `Axis`
 - funcs: misc functions and linspace
+
+## TODO:
+
+matplotlibe defaults
+- figure size is 6.4x4.8"
+- dpi is 100
+restrocture the code into something cleaner, with clear module names
