@@ -13,7 +13,12 @@ proc saveTo*(sur:Surface,filename:string) =
   for p in sur.pixels: px.add($p)
   if not savepng32(filename,px,sur.width,sur.height): assert(false,"Error saving")
 
-proc jupyterPlotData*(sur:Surface): string =
+proc png*(sur:Surface): PNG[string] =
+  var px = ""
+  for p in sur.pixels: px.add($p)
+  result = encodePNG32(px,sur.width,sur.height)
+
+proc jupyterPlotData*(sur:Surface): string {.deprecated.}=
   ## Returns the plot in the base64-"#>jnps0000x0000"/"jnps<#" delimited
   ## format jupyternim expects
   var px = ""
