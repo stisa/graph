@@ -1,11 +1,13 @@
 Graph
 =====
 
-This is a basic plotting library, written in [nim](http://nim-lang.org) and based on nimage.  
-The end goal is to have a tiny plotting lib to include in [jupyternim](https://github.com/stisa/jupyternim)  
-Outputs a `.png` file.
-  
-Some examples are inside [examples](examples):
+This is a basic plotting library, written in [nim](http://nim-lang.org) and based on nimPNG.  
+The end goal is to have a tiny plotting lib to use with [jupyternim](https://github.com/stisa/jupyternim)  
+Outputs a `.png` file or a string that contains the `png` as binary data.
+
+For what I want to achieve and where I'm at, see [target](notes/target.md)
+
+Some examples are in [examples](examples):
 
 ### Example 1
 ![lines](examples/example1.png)
@@ -29,17 +31,14 @@ import math
 
 let xx = linspace(0.0, 2*Pi, 0.1) 
 
-# Create the surface with a plot in blue
-var srf = plotXY(xx,sin(xx),Blue)
-
-# Draw a cos over the surface
-srf.drawFunc(xx,cos(xx), Purple)
+# Create the surface with a plot in purple
+var srf = plotXY(xx,cos(xx),Purple)
 
 # Pass the proc (eg ``sin``) to be mapped to xx so that yy=sin(xx)
 srf.plotProc(xx, sin, Green)
 
 # Save to file
-srf.saveTo("example2.png")
+srf.saveTo("example.png")
 ```
 
 ### Mapping procs
@@ -64,7 +63,10 @@ Inside `graph` there are specific apis:
 
 ## TODO:
 
-matplotlibe defaults
-- figure size is 6.4x4.8"
-- dpi is 100
-restrocture the code into something cleaner, with clear module names
+* matplotlib defaults
+  - figure size is 6.4x4.8"
+  - dpi is 100  
+* restrocture the code into something cleaner, with clear module names and separtion
+* [target style](notes/target.md)
+* plotProc should lazily evaluate the proc
+* have a single `plot(x,y)`  proc
