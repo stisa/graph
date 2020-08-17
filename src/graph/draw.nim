@@ -56,7 +56,8 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
   while true:
     var ap = 255-(255*(abs(err-dx+dy).float / ed - hfw + 1)).int
     #echo "first ", ap
-    srf[yi,xi] = color.withAlpha(max(0, ap))
+    var c = srf[yi, xi]
+    srf[yi,xi] = srf[yi,xi].blend(color.withAlpha(max(0, ap)))
     e2 = err
     x2 = xi
     if(2*e2 >= -dx):
@@ -66,7 +67,7 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
         y2 += sy
         ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
         #echo "second ", ap
-        srf[y2, xi] = color.withAlpha(max(0, ap))
+        srf[y2,xi] = srf[y2,xi].blend(color.withAlpha(max(0, ap)))
         e2 += dx
       
       if(xi==x1): break
@@ -80,7 +81,7 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
         x2 += sx
         ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
         #echo "third ", ap
-        srf[yi, x2] = color.withAlpha(max(0, ap))
+        srf[yi,x2] = srf[yi,x2].blend(color.withAlpha(max(0, ap)))
         e2 += dy
     
       if(yi==y1): break
