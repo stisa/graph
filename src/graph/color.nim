@@ -17,6 +17,15 @@ const
   HalfTRed* = Color(0xFF000088)
   HalftWhite* = Color(0xFFFFFF88)
 
+type Viridis* {.pure.} = enum
+  transp = Color(0x00000000)
+  blue = Color(0x1f77b4ff)
+  green = Color(0x2ca02cff)
+  red = Color(0xd62728ff)
+  orange = Color(0xff7f0eff)
+
+converter toColor*(v: Viridis): Color {.inline.} = Color(v)
+
 proc color* (r,g,b,a:int=0) :Color=
   assert(abs(r)<256, $r)
   assert(abs(g)<256, $g)
