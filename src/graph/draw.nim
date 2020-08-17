@@ -1,4 +1,4 @@
-import plot,./color
+import ./surface, ./color
 from sequtils import map
 import math
 

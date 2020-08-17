@@ -1,9 +1,9 @@
 import nimPNG
 import math, base64, streams
-import graph/plot
-import graph/draw
-import graph/color
-export color, draw, plot
+import 
+  ./graph/surface, ./graph/draw, ./graph/color
+
+export color, draw, surface
 
 proc saveTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
