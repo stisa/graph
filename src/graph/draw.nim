@@ -56,7 +56,6 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
   while true:
     var ap = 255-(255*(abs(err-dx+dy).float / ed - hfw + 1)).int
     #echo "first ", ap
-    var c = srf[yi, xi]
     srf[yi,xi] = srf[yi,xi].blend(color.withAlpha(max(0, ap)))
     e2 = err
     x2 = xi
@@ -127,12 +126,13 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   for i in 0..<axis-1: 
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
-proc plotXY*(x,y:openarray[float], lncolor:Color=Red, bgColor:Color = White, origin:tuple[x0,y0:float]=(0.0,0.0)):Surface =
+proc plotXY*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
+              origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10): Surface =
   ## Inits a surface and draws array points (x,y) to it. Returns the surface.
-  let xa = initAxis(min(x),max(x),origin.x0)
-  let ya = initAxis(min(y),max(y),origin.y0)
+  let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
+  let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
 
-  result = initSurface( xa,ya, 640,480 ) # TODO: dehardcode
+  result = initSurface( xa,ya ) # TODO: dehardcode
 
   result.fillWith(bgColor)
   ## Plot x,y with color `lncolor` and `scale`
@@ -150,7 +150,6 @@ proc plotProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Colo
 
 when isMainModule:
   import nimPNG
-  import funcs
 
   proc saveTo*(sur:Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
