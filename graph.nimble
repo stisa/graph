@@ -16,3 +16,7 @@ task buildexamples, "Build examples":
     exec("nim c -r example1.nim")
     exec("nim c -r example2.nim")
     exec("nim c -r example3.nim")
+
+task current, "Build current.png":
+  withDir "notes":
+    exec("nim c -r current.nim")
