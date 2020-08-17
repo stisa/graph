@@ -19,8 +19,8 @@ type
 
 proc pixelFromVal*(a:Axis,val:float):int =
   let 
-    paddedmax = a.max.pixel - ((a.max.pixel-a.min.pixel).float * a.padding.float / 100.0).int
-    paddedmin = a.min.pixel + ((a.max.pixel-a.min.pixel).float * a.padding.float / 200.0).int
+    paddedmax = a.max.pixel - (((a.max.pixel-a.min.pixel) * a.padding) div 100).int
+    paddedmin = a.min.pixel + (((a.max.pixel-a.min.pixel) * a.padding) div 200).int
   #result = ((( (val) - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
   result = (
     (
@@ -36,12 +36,12 @@ proc `[]`*(sur:Surface, i,j:int):Color =
   ## IN PIXEL
   if i >= sur.height or i < 0: return
   if j >= sur.width or j < 0: return
-  result = sur.pixels[(sur.height-i)*(sur.width)+j]
+  result = sur.pixels[(sur.height-1-i)*(sur.width)+j]
 
 proc `[]=`*(sur: var Surface, i,j:int, color:Color) =  
   if i >= sur.height or i < 0: return
   if j >= sur.width or j < 0: return
-  sur.pixels[(sur.height-i)*(sur.width)+j] = color
+  sur.pixels[(sur.height-1-i)*(sur.width)+j] = color
 
 proc `[]`*(sur:Surface, x,y:float):Color =
   ## x: position along the horizontal axis
