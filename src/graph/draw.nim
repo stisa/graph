@@ -119,6 +119,32 @@ proc drawAxis*(sur: var Surface, tickperc,ytickprc:float=10.0,color:Color=Black)
   let ystep = if ytickprc!=tickperc : ytickprc else: tickperc
   sur.drawTicks(color,tickperc,ystep)
 
+proc box*(sur: var Surface, color:Color=Black) =
+  sur.line(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, color)
+  sur.line(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, color)
+  sur.line(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, color)
+  sur.line(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, color)
+
+proc gridX*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
+  ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
+  let incr =  (sur.x.unpadded.max-sur.x.unpadded.min)*every
+  var point = sur.x.unpadded.min
+  while point <= sur.x.max.val:
+    sur.line(point, sur.y.min.val , point, sur.y.max.val, color)
+    point += incr
+
+proc gridY*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
+  ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
+  let incr =  (sur.y.unpadded.max-sur.y.unpadded.min)*every
+  var point = sur.y.unpadded.min
+  while point <= sur.y.max.val:
+    sur.line(sur.x.min.val, point, sur.x.max.val, point, color)
+    point += incr
+
+proc grid*(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray) =
+  sur.gridX(everyX, color)
+  sur.gridY(everyY, color)
+
 proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   ## Draw array of points (x,y) with color `lncolor` and `scale`
   # TODO: have a switch to use non antialiased lines
@@ -127,7 +153,8 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
 proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
-              origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10): Surface =
+              origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10, 
+              grid:bool=false, box:bool=true): Surface =
   ## Inits a surface and draws array points (x,y) to it. Returns the surface.
   let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
   let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
@@ -135,14 +162,19 @@ proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
   result = initSurface( xa,ya ) # TODO: dehardcode
 
   result.fillWith(bgColor)
+  if grid:
+    result.grid()
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use non antialiased lines
-  result.drawAxis()
+  #result.drawAxis()
+  if box:
+    result.box()
   result.drawFunc(x,y,lncolor)
 
 proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
               origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10) =
-  ## Inits a surface and draws array points (x,y) to it. Returns the surface.
+  ## Plot on an existing surface an array of points (x,y).
+  
   let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
   let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
 
@@ -151,7 +183,6 @@ proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgCol
   
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use non antialiased lines
-  #srf.drawAxis()
   srf.drawFunc(x,y,lncolor)
 
 proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]):openarray[T], lncolor:Color=Red) {.inline.} =

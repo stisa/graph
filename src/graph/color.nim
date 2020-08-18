@@ -21,6 +21,7 @@ type Viridis* {.pure.} = enum
   transp = Color(0x00000000)
   blue = Color(0x1f77b4ff)
   green = Color(0x2ca02cff)
+  gray = Color(0xbfbfbfff)
   red = Color(0xd62728ff)
   orange = Color(0xff7f0eff)
 

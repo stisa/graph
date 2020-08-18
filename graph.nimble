@@ -11,7 +11,7 @@ srcDir = "src"
 requires "nimPNG"
 requires "nim >= 0.15.2"
 
-task buildexamples, "Build examples":
+task examples, "Build examples":
   withDir "examples":
     exec("nim c -r example1.nim")
     exec("nim c -r example2.nim")

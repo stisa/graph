@@ -4,6 +4,7 @@ type
   Axis* = object
     max*: tuple[val:float,pixel:int]
     min*: tuple[val:float,pixel:int]
+    unpadded*: tuple[min:float, max: float]
     origin: float#tuple[val,pixel:int]
     padding: int # % of padding
 
@@ -15,6 +16,7 @@ type
     ratio: float
     origin*: tuple[x0,y0:float]
     pixels*: seq[Color]
+    #pixelPairs*: seq[tuple[x:int,y:int]] # a seq of pair of pixels values to be connected by a line
     #pixelsize: int
 
 proc pixelFromVal*(a:Axis,val:float):int =
@@ -60,10 +62,12 @@ proc fillWith*(sur: var Surface,color:Color=White) =
 
 proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=480, padding=10): Axis =
   ## padding is a percentage?
-  result.max = (v1,p1)
-  result.min = (v0,p0)
+  let padfloat = (v1-v0) * (padding / 200)
+  result.max = (v1+padfloat,p1)
+  result.min = (v0-padfloat,p0)
   result.padding = padding
   result.origin = origin
+  result.unpadded = (v0,v1)
 
 proc initSurface*(x,y:Axis) : Surface =
   result.x = x
