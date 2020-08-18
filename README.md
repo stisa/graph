@@ -25,16 +25,6 @@ srf.saveTo("currentpng.png")
 
 ```
 
-### Mapping procs
-```nim
-import math,sequtils
-# Map ln to a seq:
-proc ln(x:seq[float]):seq[float] =
-  x.mapit(ln(it))
-```
-Alternatively, if you have a map `proc(T)->T`, you can just use that
-`plot`, see [example2](examples/example2.nim)
-
 ## Current structure
 - **graph**: exposes everything ( basic functionality )
 
@@ -53,3 +43,7 @@ Inside `graph` there are specific apis:
 * plotProc should lazily evaluate the proc
 * have a single `plot(x,y)`  proc
 * better integration with Arraymancer (a Concept that matches if .data and [] ?)
+* integrate chroma? (need to contribute blend?)
+* separate drawing layers for the plot and the background/names/etc so that lines aren't overwritten
+* can I use Arraymancer's tensor without blas? Would they work in js?
+* documentation
