@@ -126,7 +126,7 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   for i in 0..<axis-1: 
     sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
   
-proc plotXY*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
+proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
               origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10): Surface =
   ## Inits a surface and draws array points (x,y) to it. Returns the surface.
   let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
@@ -140,10 +140,24 @@ proc plotXY*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = Whit
   result.drawAxis()
   result.drawFunc(x,y,lncolor)
 
+proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
+              origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10) =
+  ## Inits a surface and draws array points (x,y) to it. Returns the surface.
+  let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
+  let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
+
+  srf.x = xa
+  srf.y = ya
+  
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use non antialiased lines
+  #srf.drawAxis()
+  srf.drawFunc(x,y,lncolor)
+
 proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]):openarray[T], lncolor:Color=Red) {.inline.} =
   drawFunc(sur,x,fn(x),lncolor)
 
-proc plotProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Color=Red) =
+proc plot*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Color=Red) =
   let yy = map(x) do (x:T)->T:
     fn(x)
   drawFunc(sur, x, yy, lncolor)
