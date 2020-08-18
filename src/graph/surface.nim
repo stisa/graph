@@ -60,7 +60,7 @@ proc fillWith*(sur: var Surface,color:Color=White) =
   #sur.pixels.fill(color) 
   for pix in sur.pixels.mitems: pix = Color(color)
 
-proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=480, padding=10): Axis =
+proc initAxis*(v0,v1:float,origin:float=0.0,p0=0,p1:int=288, padding=10): Axis =
   ## padding is a percentage?
   let padfloat = (v1-v0) * (padding / 200)
   result.max = (v1+padfloat,p1)

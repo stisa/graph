@@ -154,10 +154,10 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   
 proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
               origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10, 
-              grid:bool=false, box:bool=true): Surface =
+              grid:bool=false, box:bool=true, size = [432,288]): Surface =
   ## Inits a surface and draws array points (x,y) to it. Returns the surface.
-  let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
-  let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
+  let xa = initAxis(min(x),max(x),origin.x0, 0, size[0], padding)
+  let ya = initAxis(min(y),max(y),origin.y0, 0, size[1], padding)
 
   result = initSurface( xa,ya ) # TODO: dehardcode
 
@@ -175,8 +175,8 @@ proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgCol
               origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10) =
   ## Plot on an existing surface an array of points (x,y).
   
-  let xa = initAxis(min(x),max(x),origin.x0, 0, 640, padding)
-  let ya = initAxis(min(y),max(y),origin.y0, 0, 480, padding)
+  let xa = initAxis(min(x),max(x),origin.x0, 0, srf.width, padding)
+  let ya = initAxis(min(y),max(y),origin.y0, 0, srf.height, padding)
 
   srf.x = xa
   srf.y = ya
