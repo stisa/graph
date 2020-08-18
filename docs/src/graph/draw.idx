@@ -1,0 +1,13 @@
+bresline	src/graph/draw.html#bresline,Surface,int,int,int,int,Color	draw: bresline(srf: var Surface; x1, y1, x2, y2: int; color: Color = Red)	
+aaline	src/graph/draw.html#aaline,Surface,int,int,int,int,float,Color	draw: aaline(srf: var Surface; x0, y0, x1, y1: int; w: float = 1.0; color: Color = Red)	
+line	src/graph/draw.html#line,Surface,float,float,float,float,Color	draw: line(srf: var Surface; x1, y1, x2, y2: float; color: Color = Red)	
+drawAxis	src/graph/draw.html#drawAxis,Surface,float,float,Color	draw: drawAxis(sur: var Surface; tickperc, ytickprc: float = 10.0; color: Color = Black)	
+box	src/graph/draw.html#box,Surface,Color	draw: box(sur: var Surface; color: Color = Black)	
+gridX	src/graph/draw.html#gridX,Surface,float,Color	draw: gridX(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)	
+gridY	src/graph/draw.html#gridY,Surface,float,Color	draw: gridY(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)	
+grid	src/graph/draw.html#grid,Surface,float,float,Color	draw: grid(sur: var Surface; everyX: float = 0.2; everyY: float = 0.1;\n     color: Color = Viridis.gray)	
+drawFunc	src/graph/draw.html#drawFunc,Surface,openArray[float],openArray[float],Color	draw: drawFunc(sur: var Surface; x, y: openArray[float]; lncolor: Color = Red)	
+plot	src/graph/draw.html#plot,openArray[float],openArray[float],Color,Color,tuple[float,float],int,bool,bool	draw: plot(x, y: openArray[float]; lncolor: Color = Red; bgColor: Color = White;\n     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10; grid: bool = false;\n     box: bool = true; size = [432, 288]): Surface	
+plot	src/graph/draw.html#plot,Surface,openArray[float],openArray[float],Color,Color,tuple[float,float],int	draw: plot(srf: var Surface; x, y: openArray[float]; lncolor: Color = Red;\n     bgColor: Color = White; origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10)	
+drawProc	src/graph/draw.html#drawProc,Surface,openArray[T],proc(openArray[T]),Color	draw: drawProc[T](sur: var Surface; x: openArray[T];\n            fn: proc (o: openArray[T]): openArray[T]; lncolor: Color = Red)	
+plot	src/graph/draw.html#plot,Surface,openArray[T],proc(T),Color	draw: plot[T](sur: var Surface; x: openArray[T]; fn: proc (o: T): T; lncolor: Color = Red)	

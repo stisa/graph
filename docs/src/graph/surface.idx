@@ -1,0 +1,11 @@
+Axis	src/graph/surface.html#Axis	surface: Axis	
+Surface	src/graph/surface.html#Surface	surface: Surface	
+pixelFromVal	src/graph/surface.html#pixelFromVal,Axis,float	surface: pixelFromVal(a: Axis; val: float): int	
+`[]`	src/graph/surface.html#[],Surface,int,int	surface: `[]`(sur: Surface; i, j: int): Color	
+`[]=`	src/graph/surface.html#[]=,Surface,int,int,Color	surface: `[]=`(sur: var Surface; i, j: int; color: Color)	
+`[]`	src/graph/surface.html#[],Surface,float,float	surface: `[]`(sur: Surface; x, y: float): Color	
+`[]=`	src/graph/surface.html#[]=,Surface,float,float,Color	surface: `[]=`(sur: var Surface; x, y: float; color: Color)	
+fillWith	src/graph/surface.html#fillWith,Surface,Color	surface: fillWith(sur: var Surface; color: Color = White)	
+initAxis	src/graph/surface.html#initAxis,float,float,float,int,int,int	surface: initAxis(v0, v1: float; origin: float = 0.0; p0 = 0; p1: int = 288; padding = 10): Axis	
+initSurface	src/graph/surface.html#initSurface,Axis,Axis	surface: initSurface(x, y: Axis): Surface	
+initSurface	src/graph/surface.html#initSurface,int,int,int,int	surface: initSurface(x0, w, y0, h: int): Surface	

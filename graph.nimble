@@ -20,3 +20,6 @@ task examples, "Build examples":
 task current, "Build current.png":
   withDir "notes":
     exec("nim c -r current.nim")
+
+task docs, "Build docs":
+  exec("nim doc --docRoot:@pkg --project --outdir:docs .\src\graph.nim")

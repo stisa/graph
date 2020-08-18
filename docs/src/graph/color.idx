@@ -1,0 +1,21 @@
+Color	src/graph/color.html#Color	color: Color	
+Transparent	src/graph/color.html#Transparent	color: Transparent	
+Black	src/graph/color.html#Black	color: Black	
+Blue	src/graph/color.html#Blue	color: Blue	
+Green	src/graph/color.html#Green	color: Green	
+Red	src/graph/color.html#Red	color: Red	
+Purple	src/graph/color.html#Purple	color: Purple	
+Yellow	src/graph/color.html#Yellow	color: Yellow	
+White	src/graph/color.html#White	color: White	
+HalfTBlack	src/graph/color.html#HalfTBlack	color: HalfTBlack	
+HalfTBlue	src/graph/color.html#HalfTBlue	color: HalfTBlue	
+HalfTGreen	src/graph/color.html#HalfTGreen	color: HalfTGreen	
+HalfTRed	src/graph/color.html#HalfTRed	color: HalfTRed	
+HalftWhite	src/graph/color.html#HalftWhite	color: HalftWhite	
+Viridis	src/graph/color.html#Viridis	color: Viridis	
+toColor	src/graph/color.html#toColor.c,Viridis	color: toColor(v: Viridis): Color	
+color	src/graph/color.html#color,int,int,int,int	color: color(r, g, b, a: int = 0): Color	
+withAlpha	src/graph/color.html#withAlpha,Color,int	color: withAlpha(c: Color; a: int = 0): Color	
+blend	src/graph/color.html#blend,Color,Color	color: blend(orig: var Color; newc: Color)	
+blend	src/graph/color.html#blend,Color,Color_2	color: blend(orig: Color; newc: Color): Color	
+`$`	src/graph/color.html#$,Color	color: `$`(c: Color): string	

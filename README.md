@@ -47,3 +47,4 @@ Inside `graph` there are specific apis:
 * separate drawing layers for the plot and the background/names/etc so that lines aren't overwritten
 * can I use Arraymancer's tensor without blas? Would they work in js?
 * documentation
+* looks like matplotlib does some spline/approximation stuff to get that smooth

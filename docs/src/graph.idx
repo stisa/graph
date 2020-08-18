@@ -1,0 +1,4 @@
+saveTo	src/graph.html#saveTo,Surface,string	graph: saveTo(sur: Surface; filename: string)	
+png	src/graph.html#png,Surface	graph: png(sur: Surface): PNG[string]	
+jupyterPlotData	src/graph.html#jupyterPlotData,Surface	graph: jupyterPlotData(sur: Surface): string	
+flipX	src/graph.html#flipX,Surface	graph: flipX(srf: var Surface)	
