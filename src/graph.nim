@@ -1,5 +1,5 @@
 import nimPNG
-import math, base64, streams
+import base64, streams
 import 
   ./graph/surface, ./graph/draw, ./graph/color
 
@@ -33,15 +33,29 @@ proc jupyterPlotData*(sur:Surface): string {.deprecated.}=
 
   result = "#>jnps" & sw & "x" & sh & ss.readAll.encode() & "jnps<#"
 
+# New api idea ###
+proc colorize(srf: var Surface) =
+  # color up the lines, FIFO
+  for plot in srf.plots.mitems:
+    # if done, we don't need to redraw
+    if plot.done: continue
+    srf.drawFunc(plot.x, plot.y, plot.c)
+    plot.done = true
 
-proc flipX*(srf:var Surface) =
-# TODO: swap
-  for c in 0..srf.width-1:
-    for r in 0..floor((srf.height-1)/2).int :
-      #swap(srf[c,r],srf[r,c]) error?
-      let tmp = srf[r,c]
-      srf[r,c] = srf[srf.height-r-1,c]
-      srf[srf.height-r-1,c] = tmp
+proc saveTo*(sur: var Surface, filename:string) =
+  ## Convience function. Saves `img` into `filename`
+  sur.colorize
+  var px = ""
+  for p in sur.pixels: px.add($p)
+  if not savepng32(filename,px,sur.width,sur.height): 
+    assert(false,"Error saving")
+
+proc png*(sur: var Surface): PNG[string] =
+  sur.colorize
+  var px = ""
+  for p in sur.pixels: px.add($p)
+  result = encodePNG32(px,sur.width,sur.height)
+##########
 
 when isMainModule:
   import graph/color,graph/draw

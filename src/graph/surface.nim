@@ -7,6 +7,7 @@ type
     unpadded*: tuple[min:float, max: float]
     origin: float#tuple[val,pixel:int]
     padding: int # % of padding
+    #TODO: idea: tickevery: float # every % make a tick, also defines grids
 
   Surface* = object
     width*: int
@@ -16,6 +17,11 @@ type
     ratio: float
     origin*: tuple[x0,y0:float]
     pixels*: seq[Color]
+    plots*: seq[tuple[x,y:seq[float],c:Color, done:bool]]
+    #CHECK: other alternatives:
+    #bg: seq[Color] # background pixels (background, grids etc)
+    #fg: seq[Color] # foreground pixels (plot lines)
+    # and then blend on save?
     #pixelPairs*: seq[tuple[x:int,y:int]] # a seq of pair of pixels values to be connected by a line
     #pixelsize: int
 
@@ -77,6 +83,7 @@ proc initSurface*(x,y:Axis) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (x.origin,y.origin)
   result.fillWith(White)
+  result.plots = @[]
 
 proc initSurface*(x0,w,y0,h:int) : Surface =
   result.x = initAxis(x0.float,w.float, 0, 0, w)
@@ -86,27 +93,4 @@ proc initSurface*(x0,w,y0,h:int) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (result.x.origin,result.y.origin)
   result.fillWith(White) 
-  
-when isMainModule:
-  import nimPNG,draw
-
-  
-  proc saveTo*(sur:Surface,filename:string) =
-    ## Convience function. Saves `img` into `filename`
-    var d = ""
-    for e in sur.pixels: d.add($e)
-    discard savepng32(filename,d,sur.width,sur.height)
-  
-  var x,y : Axis
-
-  x = initAxis(0.0,100.0)
-  y = initAxis(0.0,100.0)
-  var rt = initSurface( x,y,320,240 )
-
-  rt.line(0.0,0.0,50.0,50.0)
-  rt.line(50.0,50.0,100.0,0.0)
-  
-  ## Plot x,y with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
-  #rt.drawLine(0,0,5,5,Red)
-  rt.saveTo("tplot.png")
+  result.plots = @[]

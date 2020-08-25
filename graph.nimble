@@ -22,4 +22,4 @@ task current, "Build current.png":
     exec("nim c -r current.nim")
 
 task docs, "Build docs":
-  exec("nim doc --docRoot:@pkg --project --outdir:docs .\src\graph.nim")
+  exec(r"nim doc --docRoot:@pkg --project --outdir:docs .\src\graph.nim")

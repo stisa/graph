@@ -1,5 +1,5 @@
 import ./surface, ./color
-from sequtils import map
+from sequtils import map, zip
 import math
 
 proc bresline*(srf:var Surface, x1,y1,x2,y2:int, color : Color = Red) =
@@ -119,31 +119,58 @@ proc drawAxis*(sur: var Surface, tickperc,ytickprc:float=10.0,color:Color=Black)
   let ystep = if ytickprc!=tickperc : ytickprc else: tickperc
   sur.drawTicks(color,tickperc,ystep)
 
-proc box*(sur: var Surface, color:Color=Black) =
+proc xticks*(sur: var Surface, every: float = 0.20, color:Color=Viridis.gray) =
+  ## Plot ticks with `Color`, the distance between ticks is `every` as a percentage.
+  let incr =  (sur.x.unpadded.max-sur.x.unpadded.min)*every
+  var point = sur.x.unpadded.min
+  let ticksize = (sur.y.max.val-sur.y.min.val)*every/15
+  while point <= sur.x.max.val:
+    sur.line(point, sur.y.min.val-ticksize , point, sur.y.min.val, color)
+    point += incr
+
+proc yticks*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
+  ## Plot ticks with `Color`, the distance between ticks is `every` as a percentage.
+  let incr =  (sur.y.unpadded.max-sur.y.unpadded.min)*every
+  var point = sur.y.unpadded.min
+  let ticksize = (sur.x.max.val-sur.x.min.val)*every/10
+  while point <= sur.y.max.val:
+    sur.line(sur.x.min.val-ticksize, point, sur.x.min.val, point, color)
+    point += incr
+
+proc box*(sur: var Surface, color:Color=Black, ticks: bool = false) =
+  ## Plot a box around the drawable part of the plot
+  ## ## If `ticks` is true, ticks are also plotted
   sur.line(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, color)
   sur.line(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, color)
   sur.line(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, color)
   sur.line(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, color)
+  if ticks:
+    sur.xticks(color=color)
+    sur.yticks(color=color)
 
-proc gridX*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
+proc gridX*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
   ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
   let incr =  (sur.x.unpadded.max-sur.x.unpadded.min)*every
   var point = sur.x.unpadded.min
+  let ticksize = if not ticks: 0.0 else:(sur.y.max.val-sur.y.min.val)*every/15
   while point <= sur.x.max.val:
-    sur.line(point, sur.y.min.val , point, sur.y.max.val, color)
+    sur.line(point, sur.y.min.val-ticksize , point, sur.y.max.val, color)
     point += incr
 
-proc gridY*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
+proc gridY*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
   ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
   let incr =  (sur.y.unpadded.max-sur.y.unpadded.min)*every
   var point = sur.y.unpadded.min
+  let ticksize = if not ticks: 0.0 else: (sur.x.max.val-sur.x.min.val)*every/10
   while point <= sur.y.max.val:
-    sur.line(sur.x.min.val, point, sur.x.max.val, point, color)
+    sur.line(sur.x.min.val-ticksize, point, sur.x.max.val, point, color)
     point += incr
 
-proc grid*(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray) =
-  sur.gridX(everyX, color)
-  sur.gridY(everyY, color)
+proc grid*(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
+  ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
+  ## If `ticks` is true, the lines extend slightly outside
+  sur.gridX(everyX, color, ticks)
+  sur.gridY(everyY, color, ticks)
 
 proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   ## Draw array of points (x,y) with color `lncolor` and `scale`
@@ -168,7 +195,7 @@ proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
   # TODO: have a switch to use non antialiased lines
   #result.drawAxis()
   if box:
-    result.box()
+    result.box(ticks=true)
   result.drawFunc(x,y,lncolor)
 
 proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
@@ -186,18 +213,62 @@ proc plot*( srf: var Surface, x,y: openarray[float], lncolor: Color = Red, bgCol
   srf.drawFunc(x,y,lncolor)
 
 proc drawProc*[T](sur:var Surface, x:openarray[T], fn: proc(o:openarray[T]):openarray[T], lncolor:Color=Red) {.inline.} =
+  ## Plot a `fn` proc applied to the x array
   drawFunc(sur,x,fn(x),lncolor)
 
 proc plot*[T](sur:var Surface, x:openarray[T], fn: proc(o:T):T, lncolor:Color=Red) =
+  ## Plot a `fn` proc applied to each element of the `x` array
   let yy = map(x) do (x:T)->T:
     fn(x)
   drawFunc(sur, x, yy, lncolor)
 
+#### New way ideas:
+# instead of directly plotting, save the x,y arrays. When asked to
+# show the image, only then draw everything into the surface.
+# this avoids problems with overlapping when using grid or box, since
+# those are applied directly to the surface.
+proc appendXY* [T:SomeFloat](sur: var Surface, x,y: openArray[T], col: Color=Viridis.blue) =
+  assert(x.len == y.len)
+  sur.plots.add((@x, @y, col, false))
+
+proc appendProc* [T:SomeFloat](sur: var Surface, x: openArray[T],y:proc(x:T):T, col: Color=Viridis.blue) =
+  let yy = map(x) do (x:T)->T:
+    y(x)
+  sur.plots.add((@x, @yy, col, false))
+
+proc xy*(x,y: openarray[float], lncolor: Color = Viridis.blue, bgColor: Color = White,
+              origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10, 
+              grid:bool=false, box:bool=true, size = [432,288]): Surface =
+  ## Inits a surface and append points (x,y) to it. Returns the surface.
+  let xa = initAxis(min(x),max(x),origin.x0, 0, size[0], padding)
+  let ya = initAxis(min(y),max(y),origin.y0, 0, size[1], padding)
+
+  result = initSurface(xa,ya)
+
+  result.fillWith(bgColor)
+  if grid:
+    result.grid()
+  ## Plot x,y with color `lncolor` and `scale`
+  # TODO: have a switch to use non antialiased lines
+  #result.drawAxis()
+  if box:
+    result.box(ticks=true)
+  result.appendXY(x,y,lncolor)
+
+proc colorize(srf: var Surface) =
+  # color up the lines, FIFO
+  for plot in srf.plots.mitems:
+    # if done, we don't need to redraw
+    if plot.done: continue
+    srf.drawFunc(plot.x, plot.y, plot.c)
+    plot.done = true
+
 when isMainModule:
   import nimPNG
 
-  proc saveTo*(sur:Surface,filename:string) =
+  proc saveTo*(sur: var Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
+    sur.colorize
     var d=""
     for e in sur.pixels:
       d.add($e)
@@ -205,11 +276,12 @@ when isMainModule:
   
   #let xx = linspace(0.0,10,0.1)
   # var rt = plotXY(xx,exp(xx),Red,White)
-  var srf = initSurface( 0, 320, 0, 240 ) # TODO: dehardcode
-  srf.fillWith(White)
+  var srf = xy([1.0,2,3,4],[0.0, 1, 1.5, 2])
   ## Plot x,y with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
+  # TODO: have a switch to use non antialiased lines
+  srf.appendXY([1.0,2 ,3, 4], [2.0, 1.5, 1, 0.5], Viridis.orange)
+  srf.grid()
   #rt.drawLine(0,0,5,5,Red)
-  srf.bresline(0,0, 60, 60, Red)
-  srf.aaline(0,60, 60, 120, 1.0, Blue)
+  #srf.bresline(0,0, 60, 60, Red)
+  #srf.aaline(0,60, 60, 120, 1.0, Blue)
   srf.saveTo("tdraw.png")
