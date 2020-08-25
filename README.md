@@ -38,7 +38,7 @@ Inside `graph` there are specific apis:
 * matplotlib defaults
   - figure size is 6.4x4.8"
   - dpi is 100  
-* restrocture the code into something cleaner, with clear module names and separtion
+* restructure the code into something cleaner, with clear module names and separtion
 * [target style](notes/target.md)
 * plotProc should lazily evaluate the proc
 * have a single `plot(x,y)`  proc
@@ -48,3 +48,4 @@ Inside `graph` there are specific apis:
 * can I use Arraymancer's tensor without blas? Would they work in js?
 * documentation
 * looks like matplotlib does some spline/approximation stuff to get that smooth
+  * nope, checked the svg and it's plain lines => I need a better line algo

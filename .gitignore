@@ -9,5 +9,6 @@ nimcache
 *.pdb
 *.ilk
 .*
-
+*.pdf
 references
+tdraw.png

@@ -56,7 +56,7 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
   while true:
     var ap = 255-(255*(abs(err-dx+dy).float / ed - hfw + 1)).int
     #echo "first ", ap
-    srf[yi,xi] = srf[yi,xi].blend(color.withAlpha(max(0, ap)))
+    srf[yi,xi] = srf[yi,xi].blend(color.withAlpha(min(max(0, ap),255)))
     e2 = err
     x2 = xi
     if(2*e2 >= -dx):
@@ -66,7 +66,7 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
         y2 += sy
         ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
         #echo "second ", ap
-        srf[y2,xi] = srf[y2,xi].blend(color.withAlpha(max(0, ap)))
+        srf[y2,xi] = srf[y2,xi].blend(color.withAlpha(min(max(0, ap),255)))
         e2 += dx
       
       if(xi==x1): break
@@ -80,17 +80,17 @@ proc aaline*(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = R
         x2 += sx
         ap = 255-(255*(abs(e2).float/ed - hfw + 1)).int
         #echo "third ", ap
-        srf[yi,x2] = srf[yi,x2].blend(color.withAlpha(max(0, ap)))
+        srf[yi,x2] = srf[yi,x2].blend(color.withAlpha(min(max(0, ap),255)))
         e2 += dy
     
       if(yi==y1): break
       err += dx
       yi += sy
 
-proc line*(srf:var Surface, x1,y1,x2,y2:float, color : Color = Red) {.inline.} =
-
+proc line*(srf:var Surface, x1,y1,x2,y2:float, w:float=1.0, color : Color = Red) {.inline.} =
+  #TODO: expose thickness
   srf.aaline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
-              srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), 1.0, color)
+              srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), w, color)
 
 proc drawTicks(sur:var Surface,color:Color=Black,every:float=10.0,yevery:float=10.0) =
   # every is a percentage of the width/height
@@ -100,7 +100,7 @@ proc drawTicks(sur:var Surface,color:Color=Black,every:float=10.0,yevery:float=1
   var span = sur.x.max.val-sur.x.min.val
 
   for i in 1..<ticks:
-    sur.line(last_at,sur.origin.y0-ticksize,last_at,sur.origin.y0+ticksize,color)
+    sur.line(last_at,sur.origin.y0-ticksize,last_at,sur.origin.y0+ticksize, 1.0, color)
     last_at+=(span/every)
   
   ticksize = abs((sur.x.max.val-sur.x.min.val)/float(sur.x.max.pixel-sur.x.min.pixel))*3
@@ -110,12 +110,12 @@ proc drawTicks(sur:var Surface,color:Color=Black,every:float=10.0,yevery:float=1
   last_at = 0.0
 
   for i in 1..<ticks:
-    sur.line(sur.origin.x0-ticksize,last_at,sur.origin.x0+ticksize,last_at,color)
+    sur.line(sur.origin.x0-ticksize,last_at,sur.origin.x0+ticksize,last_at, 1.0, color)
     last_at+=(span/yev)
 
 proc drawAxis*(sur: var Surface, tickperc,ytickprc:float=10.0,color:Color=Black) =
-  sur.line(sur.x.min.val,sur.origin.y0,sur.x.max.val,sur.origin.y0,color)
-  sur.line(sur.origin.x0,sur.y.min.val,sur.origin.x0,sur.y.max.val,color)
+  sur.line(sur.x.min.val,sur.origin.y0,sur.x.max.val,sur.origin.y0, 1.0, color)
+  sur.line(sur.origin.x0,sur.y.min.val,sur.origin.x0,sur.y.max.val, 1.0, color)
   let ystep = if ytickprc!=tickperc : ytickprc else: tickperc
   sur.drawTicks(color,tickperc,ystep)
 
@@ -125,7 +125,7 @@ proc xticks*(sur: var Surface, every: float = 0.20, color:Color=Viridis.gray) =
   var point = sur.x.unpadded.min
   let ticksize = (sur.y.max.val-sur.y.min.val)*every/15
   while point <= sur.x.max.val:
-    sur.line(point, sur.y.min.val-ticksize , point, sur.y.min.val, color)
+    sur.line(point, sur.y.min.val-ticksize , point, sur.y.min.val, 1.0, color)
     point += incr
 
 proc yticks*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
@@ -134,16 +134,16 @@ proc yticks*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
   var point = sur.y.unpadded.min
   let ticksize = (sur.x.max.val-sur.x.min.val)*every/10
   while point <= sur.y.max.val:
-    sur.line(sur.x.min.val-ticksize, point, sur.x.min.val, point, color)
+    sur.line(sur.x.min.val-ticksize, point, sur.x.min.val, point, 1.0, color)
     point += incr
 
 proc box*(sur: var Surface, color:Color=Black, ticks: bool = false) =
   ## Plot a box around the drawable part of the plot
   ## ## If `ticks` is true, ticks are also plotted
-  sur.line(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, color)
-  sur.line(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, color)
-  sur.line(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, color)
-  sur.line(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, color)
+  sur.line(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, 1.0, color)
+  sur.line(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, 1.0, color)
+  sur.line(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, 1.0, color)
+  sur.line(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, 1.0, color)
   if ticks:
     sur.xticks(color=color)
     sur.yticks(color=color)
@@ -154,7 +154,7 @@ proc gridX*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, tic
   var point = sur.x.unpadded.min
   let ticksize = if not ticks: 0.0 else:(sur.y.max.val-sur.y.min.val)*every/15
   while point <= sur.x.max.val:
-    sur.line(point, sur.y.min.val-ticksize , point, sur.y.max.val, color)
+    sur.line(point, sur.y.min.val-ticksize , point, sur.y.max.val, 1.0, color)
     point += incr
 
 proc gridY*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
@@ -163,7 +163,7 @@ proc gridY*(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, tic
   var point = sur.y.unpadded.min
   let ticksize = if not ticks: 0.0 else: (sur.x.max.val-sur.x.min.val)*every/10
   while point <= sur.y.max.val:
-    sur.line(sur.x.min.val-ticksize, point, sur.x.max.val, point, color)
+    sur.line(sur.x.min.val-ticksize, point, sur.x.max.val, point, 1.0, color)
     point += incr
 
 proc grid*(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
@@ -177,7 +177,7 @@ proc drawFunc*(sur:var Surface, x,y:openarray[float], lncolor:Color=Red) =
   # TODO: have a switch to use non antialiased lines
   let axis = if x.len>y.len: y.len else: x.len
   for i in 0..<axis-1: 
-    sur.line(x[i],y[i], x[i+1], y[i+1], lncolor)
+    sur.line(x[i],y[i], x[i+1], y[i+1], 1.5, lncolor)
   
 proc plot*( x,y: openarray[float], lncolor: Color = Red, bgColor: Color = White,
               origin: tuple[x0,y0: float] = (0.0,0.0), padding= 10, 
@@ -283,5 +283,5 @@ when isMainModule:
   srf.grid()
   #rt.drawLine(0,0,5,5,Red)
   #srf.bresline(0,0, 60, 60, Red)
-  #srf.aaline(0,60, 60, 120, 1.0, Blue)
+  srf.aaline(0,60, 60, 120, 2.0, Blue)
   srf.saveTo("tdraw.png")
