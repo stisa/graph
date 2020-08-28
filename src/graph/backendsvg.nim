@@ -103,7 +103,7 @@ proc svg*(s: Surface):string =
   let grid = if s.drawgrid: s.renderGrid else: @[]
   let box = if s.drawbox: s.renderBox(ticks=s.drawticks) else: @[]
   let svgnodes = buildSvg:
-    svg(width= fmt"{s.width}pt", height= fmt"{s.height}pt", fill= fmt"#{s.bg:08x}"):
+    svg(width= fmt"{s.width}", height= fmt"{s.height}", fill= fmt"#{s.bg:08x}"):
       for b in box:
         path(d=b, stroke="black", fill="transparent")
       for i, g in grid:
