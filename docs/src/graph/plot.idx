@@ -1,0 +1,4 @@
+New way ideas:	src/graph/plot.html#new-way-ideascolon	  New way ideas:	
+plot	src/graph/plot.html#plot,Surface,openArray[T],openArray[T],Color	plot: plot[T: SomeFloat](sur: var Surface; x, y: openArray[T]; col: Color = Viridis.orange)	
+plot	src/graph/plot.html#plot,Surface,openArray[T],proc(T),Color	plot: plot[T: SomeFloat](sur: var Surface; x: openArray[T]; y: proc (x: T): T;\n                  col: Color = Viridis.orange)	
+plot	src/graph/plot.html#plot,openArray[float],openArray[float],Color,Color,tuple[float,float],int,bool,bool	plot: plot(x, y: openArray[float]; lncolor: Color = Viridis.blue; bgColor: Color = White;\n     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 20; grid: bool = false;\n     box: bool = true; ticks = true; size = [432, 288]): Surface	

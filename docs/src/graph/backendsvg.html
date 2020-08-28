@@ -14,7 +14,7 @@
 <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>src/graph</title>
+<title>src/graph/backendsvg</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -1208,7 +1208,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">src/graph</h1>
+    <h1 class="title">src/graph/backendsvg</h1>
     <div class="row">
   <div class="three columns">
   <ul class="simple simple-toc" id="toc-list">
@@ -1221,17 +1221,11 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#saveTo,Surface,string"
-    title="saveTo(sur: var Surface; filename: string)"><wbr />save<wbr />To<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#saveTo,Surface,string_2"
-    title="saveTo(sur: Surface; filename: string)"><wbr />save<wbr />To<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#svg,Surface"
+    title="svg(s: Surface): string"><wbr />svg<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#saveToSvg,Surface,string"
+    title="saveToSvg(s: Surface; f: string)"><wbr />save<wbr />To<wbr />Svg<span class="attachedType" style="visibility:hidden"></span></a></li>
 
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#19" id="69">Exports</a>
-  <ul class="simple simple-toc-section">
-    
   </ul>
 </li>
 
@@ -1240,43 +1234,27 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc">
-<p><strong class="examples_text">Example:</strong></p>
-<pre class = "listing"><span class="Keyword">import</span><span class="Whitespace"> </span><span class="Identifier">math</span><span class="Punctuation">,</span><span class="Whitespace"> </span><span class="Identifier">arraymancer</span><span class="Whitespace">
-</span><span class="Keyword">let</span><span class="Whitespace"> </span><span class="Identifier">x</span><span class="Whitespace"> </span><span class="Operator">=</span><span class="Whitespace"> </span><span class="Identifier">arange</span><span class="Punctuation">(</span><span class="FloatNumber">0.0</span><span class="Punctuation">,</span><span class="DecNumber">10</span><span class="Punctuation">,</span><span class="FloatNumber">0.1</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Keyword">let</span><span class="Whitespace"> </span><span class="Identifier">y</span><span class="Whitespace"> </span><span class="Operator">=</span><span class="Whitespace"> </span><span class="Identifier">sin</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Keyword">let</span><span class="Whitespace"> </span><span class="Identifier">y2</span><span class="Whitespace"> </span><span class="Operator">=</span><span class="Whitespace"> </span><span class="Identifier">cos</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Keyword">var</span><span class="Whitespace"> </span><span class="Identifier">rt</span><span class="Whitespace"> </span><span class="Operator">=</span><span class="Whitespace"> </span><span class="Identifier">plot</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">,</span><span class="Identifier">y</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Identifier">rt</span><span class="Operator">.</span><span class="Identifier">plot</span><span class="Punctuation">(</span><span class="Identifier">x</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">,</span><span class="Identifier">y2</span><span class="Operator">.</span><span class="Identifier">data</span><span class="Punctuation">,</span><span class="Whitespace"> </span><span class="Identifier">col</span><span class="Operator">=</span><span class="Identifier">Viridis</span><span class="Operator">.</span><span class="Identifier">orange</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Identifier">rt</span><span class="Operator">.</span><span class="Identifier">drawgrid</span><span class="Whitespace"> </span><span class="Operator">=</span><span class="Whitespace"> </span><span class="Identifier">true</span><span class="Whitespace">
-</span><span class="Identifier">rt</span><span class="Operator">.</span><span class="Identifier">saveTo</span><span class="Punctuation">(</span><span class="StringLit">&quot;tdraw.png&quot;</span><span class="Punctuation">)</span><span class="Whitespace">
-</span><span class="Identifier">rt</span><span class="Operator">.</span><span class="Identifier">saveTo</span><span class="Punctuation">(</span><span class="StringLit">&quot;tdraw.svg&quot;</span><span class="Punctuation">)</span></pre></p>
+  <p class="module-desc"></p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="graph/surface.html">graph/surface</a>, <a class="reference external" href="graph/plot.html">graph/plot</a>, <a class="reference external" href="graph/color.html">graph/color</a>, <a class="reference external" href="graph/backendpng.html">graph/backendpng</a>, <a class="reference external" href="graph/backendsvg.html">graph/backendsvg</a>
+<a class="reference external" href="surface.html">surface</a>, <a class="reference external" href="color.html">color</a>
 </dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<dt id="saveTo"><a name="saveTo,Surface,string"></a><pre><span class="Keyword">proc</span> <a href="#saveTo%2CSurface%2Cstring"><span class="Identifier">saveTo</span></a><span class="Other">(</span><span class="Identifier">sur</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="graph/surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">OSError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt id="svg"><a name="svg,Surface"></a><pre><span class="Keyword">proc</span> <a href="#svg%2CSurface"><span class="Identifier">svg</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Convience function. Saves <tt class="docutils literal"><span class="pre">img</span></tt> into <tt class="docutils literal"><span class="pre">filename</span></tt>
+
 
 </dd>
-<dt id="saveTo"><a name="saveTo,Surface,string_2"></a><pre><span class="Keyword">proc</span> <a href="#saveTo%2CSurface%2Cstring_2"><span class="Identifier">saveTo</span></a><span class="Other">(</span><span class="Identifier">sur</span><span class="Other">:</span> <a href="graph/surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">;</span> <span class="Identifier">filename</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt id="saveToSvg"><a name="saveToSvg,Surface,string"></a><pre><span class="Keyword">proc</span> <a href="#saveToSvg%2CSurface%2Cstring"><span class="Identifier">saveToSvg</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">;</span> <span class="Identifier">f</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">IOError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+                                   <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">WriteIOEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
-Convience function. Saves <tt class="docutils literal"><span class="pre">img</span></tt> into <tt class="docutils literal"><span class="pre">filename</span></tt>
+
 
 </dd>
 
-</dl></div>
-<div class="section" id="19">
-<h1><a class="toc-backref" href="#19">Exports</a></h1>
-<dl class="item">
-<a href="graph/color.html#Green"><span class="Identifier">Green</span></a>, <a href="graph/color.html#HalfTBlack"><span class="Identifier">HalfTBlack</span></a>, <a href="graph/color.html#Yellow"><span class="Identifier">Yellow</span></a>, <a href="graph/color.html#color"><span class="Identifier">color</span></a>, <a href="graph/color.html#$"><span class="Identifier">$</span></a>, <a href="graph/color.html#HalftWhite"><span class="Identifier">HalftWhite</span></a>, <a href="graph/color.html#Purple"><span class="Identifier">Purple</span></a>, <a class="reference external" href="graph/color.html">graph/color</a>, <a href="graph/color.html#Blue"><span class="Identifier">Blue</span></a>, <a href="graph/color.html#blend"><span class="Identifier">blend</span></a>, <a href="graph/color.html#Red"><span class="Identifier">Red</span></a>, <a href="graph/color.html#Color"><span class="Identifier">Color</span></a>, <a href="graph/color.html#White"><span class="Identifier">White</span></a>, <a href="graph/color.html#HalfTBlue"><span class="Identifier">HalfTBlue</span></a>, <a href="graph/color.html#HalfTRed"><span class="Identifier">HalfTRed</span></a>, <a href="graph/color.html#HalfTGreen"><span class="Identifier">HalfTGreen</span></a>, <a href="graph/color.html#toColor"><span class="Identifier">toColor</span></a>, <a href="graph/color.html#blend"><span class="Identifier">blend</span></a>, <a href="graph/color.html#Black"><span class="Identifier">Black</span></a>, <a href="graph/color.html#withAlpha"><span class="Identifier">withAlpha</span></a>, <a href="graph/color.html#Viridis"><span class="Identifier">Viridis</span></a>, <a href="graph/color.html#Transparent"><span class="Identifier">Transparent</span></a>, <a href="graph/plot.html#plot"><span class="Identifier">plot</span></a>, <a href="graph/plot.html#plot"><span class="Identifier">plot</span></a>, <a class="reference external" href="graph/plot.html">graph/plot</a>, <a href="graph/plot.html#plot"><span class="Identifier">plot</span></a>, <a href="graph/surface.html#[]="><span class="Identifier">[]=</span></a>, <a href="graph/surface.html#initSurface"><span class="Identifier">initSurface</span></a>, <a href="graph/surface.html#Axis"><span class="Identifier">Axis</span></a>, <a href="graph/surface.html#initSurface"><span class="Identifier">initSurface</span></a>, <a class="reference external" href="graph/surface.html">graph/surface</a>, <a href="graph/surface.html#pixelFromVal"><span class="Identifier">pixelFromVal</span></a>, <a href="graph/surface.html#pixelFromVal2"><span class="Identifier">pixelFromVal2</span></a>, <a href="graph/surface.html#grid"><span class="Identifier">grid</span></a>, <a href="graph/surface.html#fillWith"><span class="Identifier">fillWith</span></a>, <a href="graph/surface.html#Surface"><span class="Identifier">Surface</span></a>, <a href="graph/surface.html#[]"><span class="Identifier">[]</span></a>, <a href="graph/surface.html#[]="><span class="Identifier">[]=</span></a>, <a href="graph/surface.html#initAxis"><span class="Identifier">initAxis</span></a>, <a href="graph/surface.html#box"><span class="Identifier">box</span></a>, <a href="graph/surface.html#[]"><span class="Identifier">[]</span></a>, <a href="graph/backendpng.html#saveToPng"><span class="Identifier">saveToPng</span></a>, <a href="graph/backendpng.html#png"><span class="Identifier">png</span></a>, <a class="reference external" href="graph/backendpng.html">graph/backendpng</a>, <a href="graph/backendsvg.html#saveToSvg"><span class="Identifier">saveToSvg</span></a>, <a class="reference external" href="graph/backendsvg.html">graph/backendsvg</a>, <a href="graph/backendsvg.html#svg"><span class="Identifier">svg</span></a>
 </dl></div>
 
   </div>
@@ -1286,7 +1264,7 @@ Convience function. Saves <tt class="docutils literal"><span class="pre">img</sp
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-08-28 10:34:44 UTC</small>
+        <small>Made with Nim. Generated: 2020-08-28 10:34:35 UTC</small>
       </div>
     </div>
   </div>

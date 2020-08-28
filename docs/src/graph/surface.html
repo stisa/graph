@@ -1236,7 +1236,13 @@ function main() {
   y*: Axis
   ratio: float
   origin*: tuple[x0, y0: float]
-  pixels*: seq[Color]"><wbr />Surface<span class="attachedType" style="visibility:hidden"></span></a></li>
+  pixels*: seq[Color]
+  plots*: seq[tuple[x, y: seq[float], c: Color, done: bool]]
+  bg*: Color
+  drawgrid*: bool
+  drawbox*: bool
+  drawticks*: bool
+  drawlabels*: bool"><wbr />Surface<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1245,6 +1251,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#pixelFromVal,Axis,float"
     title="pixelFromVal(a: Axis; val: float): int"><wbr />pixel<wbr />From<wbr />Val<span class="attachedType" style="visibility:hidden">Axis</span></a></li>
+  <li><a class="reference" href="#pixelFromVal2,Axis,float,bool"
+    title="pixelFromVal2(a: Axis; val: float; invert: bool = false): float"><wbr />pixel<wbr />From<wbr />Val2<span class="attachedType" style="visibility:hidden">Axis</span></a></li>
   <li><a class="reference" href="#[],Surface,int,int"
     title="`[]`(sur: Surface; i, j: int): Color"><wbr />`[]`<span class="attachedType" style="visibility:hidden">Surface</span></a></li>
   <li><a class="reference" href="#[]=,Surface,int,int,Color"
@@ -1261,6 +1269,10 @@ function main() {
     title="initSurface(x, y: Axis): Surface"><wbr />init<wbr />Surface<span class="attachedType" style="visibility:hidden">Axis</span></a></li>
   <li><a class="reference" href="#initSurface,int,int,int,int"
     title="initSurface(x0, w, y0, h: int): Surface"><wbr />init<wbr />Surface<span class="attachedType" style="visibility:hidden">Surface</span></a></li>
+  <li><a class="reference" href="#grid,Surface"
+    title="grid(s: var Surface)"><wbr />grid<span class="attachedType" style="visibility:hidden">Surface</span></a></li>
+  <li><a class="reference" href="#box,Surface"
+    title="box(s: var Surface; ticks = false)"><wbr />box<span class="attachedType" style="visibility:hidden">Surface</span></a></li>
 
   </ul>
 </li>
@@ -1298,6 +1310,12 @@ function main() {
   <span class="Identifier">ratio</span><span class="Other">:</span> <span class="Identifier">float</span>
   <span class="Identifier">origin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x0</span><span class="Other">,</span> <span class="Identifier">y0</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">]</span>
   <span class="Identifier">pixels</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="color.html#Color"><span class="Identifier">Color</span></a><span class="Other">]</span>
+  <span class="Identifier">plots</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">float</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">c</span><span class="Other">:</span> <a href="color.html#Color"><span class="Identifier">Color</span></a><span class="Other">,</span> <span class="Identifier">done</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">]</span><span class="Other">]</span>
+  <span class="Identifier">bg</span><span class="Operator">*</span><span class="Other">:</span> <a href="color.html#Color"><span class="Identifier">Color</span></a>
+  <span class="Identifier">drawgrid</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">drawbox</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">drawticks</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
+  <span class="Identifier">drawlabels</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>
 </pre></dt>
 <dd>
 
@@ -1309,6 +1327,11 @@ function main() {
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
 <dt id="pixelFromVal"><a name="pixelFromVal,Axis,float"></a><pre><span class="Keyword">proc</span> <a href="#pixelFromVal%2CAxis%2Cfloat"><span class="Identifier">pixelFromVal</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="surface.html#Axis"><span class="Identifier">Axis</span></a><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
+<dt id="pixelFromVal2"><a name="pixelFromVal2,Axis,float,bool"></a><pre><span class="Keyword">proc</span> <a href="#pixelFromVal2%2CAxis%2Cfloat%2Cbool"><span class="Identifier">pixelFromVal2</span></a><span class="Other">(</span><span class="Identifier">a</span><span class="Other">:</span> <a href="surface.html#Axis"><span class="Identifier">Axis</span></a><span class="Other">;</span> <span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">float</span><span class="Other">;</span> <span class="Identifier">invert</span><span class="Other">:</span> <span class="Identifier">bool</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 
@@ -1354,6 +1377,16 @@ padding is a percentage?
 
 
 </dd>
+<dt id="grid"><a name="grid,Surface"></a><pre><span class="Keyword">proc</span> <a href="#grid%2CSurface"><span class="Identifier">grid</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
+<dt id="box"><a name="box,Surface"></a><pre><span class="Keyword">proc</span> <a href="#box%2CSurface"><span class="Identifier">box</span></a><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <span class="Keyword">var</span> <a href="surface.html#Surface"><span class="Identifier">Surface</span></a><span class="Other">;</span> <span class="Identifier">ticks</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
 
 </dl></div>
 
@@ -1364,7 +1397,7 @@ padding is a percentage?
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-08-18 11:40:13 UTC</small>
+        <small>Made with Nim. Generated: 2020-08-28 10:34:34 UTC</small>
       </div>
     </div>
   </div>

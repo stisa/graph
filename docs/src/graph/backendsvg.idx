@@ -1,0 +1,2 @@
+svg	src/graph/backendsvg.html#svg,Surface	backendsvg: svg(s: Surface): string	
+saveToSvg	src/graph/backendsvg.html#saveToSvg,Surface,string	backendsvg: saveToSvg(s: Surface; f: string)	

@@ -1209,7 +1209,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="src/graph.html">src/graph</a>, <a href="src/graph/color.html">src/graph/color</a>, <a href="src/graph/draw.html">src/graph/draw</a>, <a href="src/graph/surface.html">src/graph/surface</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="src/graph.html">src/graph</a>, <a href="src/graph/backendpng.html">src/graph/backendpng</a>, <a href="src/graph/backendsvg.html">src/graph/backendsvg</a>, <a href="src/graph/color.html">src/graph/color</a>, <a href="src/graph/draw.html">src/graph/draw</a>, <a href="src/graph/plot.html">src/graph/plot</a>, <a href="src/graph/surface.html">src/graph/surface</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="color: `$`(c: Color): string" href="src/graph/color.html#%24%2CColor">color: `$`(c: Color): string</a></li>
@@ -1251,6 +1251,8 @@ function main() {
 <dt><a name="box" href="#box"><span>box:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="draw: box(sur: var Surface; color: Color = Black)" href="src/graph/draw.html#box%2CSurface%2CColor">draw: box(sur: var Surface; color: Color = Black)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="surface: box(s: var Surface; ticks = false)" href="src/graph/surface.html#box%2CSurface">surface: box(s: var Surface; ticks = false)</a></li>
           </ul></dd>
 <dt><a name="bresline" href="#bresline"><span>bresline:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1282,10 +1284,6 @@ function main() {
 <li><a class="reference external"
           data-doc-search-tag="surface: fillWith(sur: var Surface; color: Color = White)" href="src/graph/surface.html#fillWith%2CSurface%2CColor">surface: fillWith(sur: var Surface; color: Color = White)</a></li>
           </ul></dd>
-<dt><a name="flipX" href="#flipX"><span>flipX:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="graph: flipX(srf: var Surface)" href="src/graph.html#flipX%2CSurface">graph: flipX(srf: var Surface)</a></li>
-          </ul></dd>
 <dt><a name="Green" href="#Green"><span>Green:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="color: Green" href="src/graph/color.html#Green">color: Green</a></li>
@@ -1295,6 +1293,8 @@ function main() {
           data-doc-search-tag="draw: grid(sur: var Surface; everyX: float = 0.2; everyY: float = 0.1;
      color: Color = Viridis.gray)" href="src/graph/draw.html#grid%2CSurface%2Cfloat%2Cfloat%2CColor">draw: grid(sur: var Surface; everyX: float = 0.2; everyY: float = 0.1;
      color: Color = Viridis.gray)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="surface: grid(s: var Surface)" href="src/graph/surface.html#grid%2CSurface">surface: grid(s: var Surface)</a></li>
           </ul></dd>
 <dt><a name="gridX" href="#gridX"><span>gridX:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1334,10 +1334,6 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="surface: initSurface(x0, w, y0, h: int): Surface" href="src/graph/surface.html#initSurface%2Cint%2Cint%2Cint%2Cint">surface: initSurface(x0, w, y0, h: int): Surface</a></li>
           </ul></dd>
-<dt><a name="jupyterPlotData" href="#jupyterPlotData"><span>jupyterPlotData:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="graph: jupyterPlotData(sur: Surface): string" href="src/graph.html#jupyterPlotData%2CSurface">graph: jupyterPlotData(sur: Surface): string</a></li>
-          </ul></dd>
 <dt><a name="line" href="#line"><span>line:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="draw: line(srf: var Surface; x1, y1, x2, y2: float; color: Color = Red)" href="src/graph/draw.html#line%2CSurface%2Cfloat%2Cfloat%2Cfloat%2Cfloat%2CColor">draw: line(srf: var Surface; x1, y1, x2, y2: float; color: Color = Red)</a></li>
@@ -1345,6 +1341,10 @@ function main() {
 <dt><a name="pixelFromVal" href="#pixelFromVal"><span>pixelFromVal:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="surface: pixelFromVal(a: Axis; val: float): int" href="src/graph/surface.html#pixelFromVal%2CAxis%2Cfloat">surface: pixelFromVal(a: Axis; val: float): int</a></li>
+          </ul></dd>
+<dt><a name="pixelFromVal2" href="#pixelFromVal2"><span>pixelFromVal2:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="surface: pixelFromVal2(a: Axis; val: float; invert: bool = false): float" href="src/graph/surface.html#pixelFromVal2%2CAxis%2Cfloat%2Cbool">surface: pixelFromVal2(a: Axis; val: float; invert: bool = false): float</a></li>
           </ul></dd>
 <dt><a name="plot" href="#plot"><span>plot:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1359,10 +1359,22 @@ function main() {
      bgColor: Color = White; origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="draw: plot[T](sur: var Surface; x: openArray[T]; fn: proc (o: T): T; lncolor: Color = Red)" href="src/graph/draw.html#plot%2CSurface%2CopenArray%5BT%5D%2Cproc%28T%29%2CColor">draw: plot[T](sur: var Surface; x: openArray[T]; fn: proc (o: T): T; lncolor: Color = Red)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="plot: plot(x, y: openArray[float]; lncolor: Color = Viridis.blue; bgColor: Color = White;
+     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 20; grid: bool = false;
+     box: bool = true; ticks = true; size = [432, 288]): Surface" href="src/graph/plot.html#plot%2CopenArray%5Bfloat%5D%2CopenArray%5Bfloat%5D%2CColor%2CColor%2Ctuple%5Bfloat%2Cfloat%5D%2Cint%2Cbool%2Cbool">plot: plot(x, y: openArray[float]; lncolor: Color = Viridis.blue; bgColor: Color = White;
+     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 20; grid: bool = false;
+     box: bool = true; ticks = true; size = [432, 288]): Surface</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="plot: plot[T: SomeFloat](sur: var Surface; x, y: openArray[T]; col: Color = Viridis.orange)" href="src/graph/plot.html#plot%2CSurface%2CopenArray%5BT%5D%2CopenArray%5BT%5D%2CColor">plot: plot[T: SomeFloat](sur: var Surface; x, y: openArray[T]; col: Color = Viridis.orange)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="plot: plot[T: SomeFloat](sur: var Surface; x: openArray[T]; y: proc (x: T): T;
+                  col: Color = Viridis.orange)" href="src/graph/plot.html#plot%2CSurface%2CopenArray%5BT%5D%2Cproc%28T%29%2CColor">plot: plot[T: SomeFloat](sur: var Surface; x: openArray[T]; y: proc (x: T): T;
+                  col: Color = Viridis.orange)</a></li>
           </ul></dd>
 <dt><a name="png" href="#png"><span>png:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="graph: png(sur: Surface): PNG[string]" href="src/graph.html#png%2CSurface">graph: png(sur: Surface): PNG[string]</a></li>
+          data-doc-search-tag="backendpng: png(sur: var Surface): PNG[string]" href="src/graph/backendpng.html#png%2CSurface">backendpng: png(sur: var Surface): PNG[string]</a></li>
           </ul></dd>
 <dt><a name="Purple" href="#Purple"><span>Purple:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1374,11 +1386,25 @@ function main() {
           </ul></dd>
 <dt><a name="saveTo" href="#saveTo"><span>saveTo:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="graph: saveTo(sur: Surface; filename: string)" href="src/graph.html#saveTo%2CSurface%2Cstring">graph: saveTo(sur: Surface; filename: string)</a></li>
+          data-doc-search-tag="graph: saveTo(sur: var Surface; filename: string)" href="src/graph.html#saveTo%2CSurface%2Cstring">graph: saveTo(sur: var Surface; filename: string)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="graph: saveTo(sur: Surface; filename: string)" href="src/graph.html#saveTo%2CSurface%2Cstring_2">graph: saveTo(sur: Surface; filename: string)</a></li>
+          </ul></dd>
+<dt><a name="saveToPng" href="#saveToPng"><span>saveToPng:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="backendpng: saveToPng(sur: var Surface; filename: string)" href="src/graph/backendpng.html#saveToPng%2CSurface%2Cstring">backendpng: saveToPng(sur: var Surface; filename: string)</a></li>
+          </ul></dd>
+<dt><a name="saveToSvg" href="#saveToSvg"><span>saveToSvg:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="backendsvg: saveToSvg(s: Surface; f: string)" href="src/graph/backendsvg.html#saveToSvg%2CSurface%2Cstring">backendsvg: saveToSvg(s: Surface; f: string)</a></li>
           </ul></dd>
 <dt><a name="Surface" href="#Surface"><span>Surface:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="surface: Surface" href="src/graph/surface.html#Surface">surface: Surface</a></li>
+          </ul></dd>
+<dt><a name="svg" href="#svg"><span>svg:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="backendsvg: svg(s: Surface): string" href="src/graph/backendsvg.html#svg%2CSurface">backendsvg: svg(s: Surface): string</a></li>
           </ul></dd>
 <dt><a name="toColor" href="#toColor"><span>toColor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1409,7 +1435,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-08-18 11:40:13 UTC</small>
+        <small>Made with Nim. Generated: 2020-08-28 10:34:44 UTC</small>
       </div>
     </div>
   </div>

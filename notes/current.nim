@@ -4,8 +4,9 @@ let
 let 
   y  = sin(x)
   y2 = cos(x)
-var srf = plot(x.data,y.data, Viridis.blue, grid=true)
-srf.plot(x.data, y2.data, Viridis.orange)
+var srf = plot(x.data,y.data)
+srf.plot(x.data, y2.data)
+srf.grid
 # Save to file
 srf.saveTo("currentpng.png")
-echo size(x)
+srf.saveTo("currentsvg.svg")

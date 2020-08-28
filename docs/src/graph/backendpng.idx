@@ -1,0 +1,2 @@
+saveToPng	src/graph/backendpng.html#saveToPng,Surface,string	backendpng: saveToPng(sur: var Surface; filename: string)	
+png	src/graph/backendpng.html#png,Surface	backendpng: png(sur: var Surface): PNG[string]	
