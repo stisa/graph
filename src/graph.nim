@@ -1,48 +1,37 @@
-import nimPNG
-import base64, streams
+import strutils
 import 
-  ./graph/surface, ./graph/draw, ./graph/color
+  ./graph/surface, ./graph/plot, ./graph/color
 
-export color, draw, surface
+export color, plot, surface
+
+import ./graph/backendpng, ./graph/backendsvg
+
+export backendpng, backendsvg
+
+proc saveTo*(sur: var Surface,filename:string) =
+  ## Convience function. Saves `img` into `filename`
+  if filename.endsWith("svg"):
+    sur.saveToSvg(filename)
+  elif filename.endsWith("png"):
+    sur.saveToPng(filename)
+  else:
+    raise newException(ValueError, "Only svg and png outputs are supported")
 
 proc saveTo*(sur:Surface,filename:string) =
   ## Convience function. Saves `img` into `filename`
-  var px = ""
-  for p in sur.pixels: px.add($p)
-  if not savepng32(filename,px,sur.width,sur.height): assert(false,"Error saving")
-
-proc png*(sur:Surface): PNG[string] =
-  var px = ""
-  for p in sur.pixels: px.add($p)
-  result = encodePNG32(px,sur.width,sur.height)
-
-proc jupyterPlotData*(sur:Surface): string {.deprecated.}=
-  ## Returns the plot in the base64-"#>jnps0000x0000"/"jnps<#" delimited
-  ## format jupyternim expects
-  var px = ""
-  for p in sur.pixels: px.add($p)
-  var ss = newStringStream("")
-  writeChunks(encodePNG32(px,sur.width,sur.height), ss)
-  ss.setPosition(0)
-
-  var sw = $sur.width
-  var sh = $sur.height
-  #FIXME: assumes w/h are either 3 or 4 digits
-  if sw.len!=4: sw = "0" & sw
-  if sh.len!=4: sh = "0" & sh
-
-  result = "#>jnps" & sw & "x" & sh & ss.readAll.encode() & "jnps<#"
-
-# New api idea ###
-import graph/backendpng, graph/backendsvg
-export backendpng, backendsvg
-##########
+  if filename.endsWith("svg"):
+    sur.saveToSvg(filename)
+  else:
+    raise newException(ValueError, "Only svg and png outputs are supported")
 
 when isMainModule:
-  import nimsvg, math, arraymancer
-  let x = arange(0.0,10,0.1)
-  let y = sin(x)
-  var rt = xy(x.data,y.data)
-  rt.drawgrid = true
-  rt.saveToPng("tdraw.png")
-  rt.saveToSvg("tdraw.svg")
+  runnableExamples:
+    import math, arraymancer
+    let x = arange(0.0,10,0.1)
+    let y = sin(x)
+    let y2 = cos(x)
+    var rt = plot(x.data,y.data)
+    rt.plot(x.data,y2.data, col=Viridis.orange)
+    rt.drawgrid = true
+    rt.saveTo("tdraw.png")
+    rt.saveTo("tdraw.svg")

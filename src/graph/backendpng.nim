@@ -1,4 +1,4 @@
-import ./surface, nimPNG, ./draw, ./color
+import ./surface, nimPNG, ./color
 
 import math
 
@@ -52,7 +52,7 @@ proc aaline(srf:var Surface, x0,y0,x1,y1:int, w: float = 1.0, color : Color = Re
       err += dx
       yi += sy
 
-proc rasterLine(srf:var Surface, x1,y1,x2,y2:float, w:float=1.0, color : Color = Red) {.inline.} =
+proc renderLine(srf:var Surface, x1,y1,x2,y2:float, w:float=1.0, color : Color = Red) {.inline.} =
   srf.aaline(srf.x.pixelFromVal(srf.origin.x0+x1), srf.y.pixelFromVal(srf.origin.y0+y1),
               srf.x.pixelFromVal(srf.origin.x0+x2),srf.y.pixelFromVal(srf.origin.y0+y2), w, color)
 
@@ -62,7 +62,7 @@ proc xticks(sur: var Surface, every: float = 0.20, color:Color=Viridis.gray) =
   var point = sur.x.unpadded.min
   let ticksize = (sur.y.max.val-sur.y.min.val)*every/15
   while point <= sur.x.max.val:
-    sur.rasterLine(point, sur.y.min.val-ticksize , point, sur.y.min.val, 1.0, color)
+    sur.renderLine(point, sur.y.min.val-ticksize , point, sur.y.min.val, 1.0, color)
     point += incr
 
 proc yticks(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
@@ -71,17 +71,17 @@ proc yticks(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray) =
   var point = sur.y.unpadded.min
   let ticksize = (sur.x.max.val-sur.x.min.val)*every/10
   while point <= sur.y.max.val:
-    sur.rasterLine(sur.x.min.val-ticksize, point, sur.x.min.val, point, 1.0, color)
+    sur.renderLine(sur.x.min.val-ticksize, point, sur.x.min.val, point, 1.0, color)
     point += incr
 
 
-proc rasterBox(sur: var Surface, color:Color=Black, ticks: bool = false) =
+proc renderBox(sur: var Surface, color:Color=Black, ticks: bool = false) =
   ## Plot a box around the drawable part of the plot
   ## ## If `ticks` is true, ticks are also plotted
-  sur.rasterLine(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, 1.0, color)
-  sur.rasterLine(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, 1.0, color)
-  sur.rasterLine(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, 1.0, color)
-  sur.rasterLine(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, 1.0, color)
+  sur.renderLine(sur.x.min.val, sur.y.min.val , sur.x.min.val, sur.y.max.val, 1.0, color)
+  sur.renderLine(sur.x.min.val, sur.y.min.val , sur.x.max.val, sur.y.min.val, 1.0, color)
+  sur.renderLine(sur.x.max.val, sur.y.min.val , sur.x.max.val, sur.y.max.val, 1.0, color)
+  sur.renderLine(sur.x.min.val, sur.y.max.val , sur.x.max.val, sur.y.max.val, 1.0, color)
   if ticks:
     sur.xticks(color=color)
     sur.yticks(color=color)
@@ -92,7 +92,7 @@ proc gridX(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, tick
   var point = sur.x.unpadded.min
   let ticksize = if not ticks: 0.0 else:(sur.y.max.val-sur.y.min.val)*every/15
   while point <= sur.x.max.val:
-    sur.rasterLine(point, sur.y.min.val-ticksize , point, sur.y.max.val, 1.0, color)
+    sur.renderLine(point, sur.y.min.val-ticksize , point, sur.y.max.val, 1.0, color)
     point += incr
 
 proc gridY(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
@@ -101,40 +101,42 @@ proc gridY(sur: var Surface, every: float = 0.10, color:Color=Viridis.gray, tick
   var point = sur.y.unpadded.min
   let ticksize = if not ticks: 0.0 else: (sur.x.max.val-sur.x.min.val)*every/10
   while point <= sur.y.max.val:
-    sur.rasterLine(sur.x.min.val-ticksize, point, sur.x.max.val, point, 1.0, color)
+    sur.renderLine(sur.x.min.val-ticksize, point, sur.x.max.val, point, 1.0, color)
     point += incr
 
-proc rasterGrid(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
+proc renderGrid(sur: var Surface, everyX: float = 0.2, everyY: float = 0.10, color:Color=Viridis.gray, ticks:bool=false) =
   ## Plot a grid with `Color`, the distance between lines is `every` as a percentage.
   ## If `ticks` is true, the lines extend slightly outside
   sur.gridX(everyX, color, ticks)
   sur.gridY(everyY, color, ticks)
 
 
-proc colorize(srf: var Surface) =
+proc render(srf: var Surface) =
   srf.fillWith(srf.bg)
   
   if srf.drawgrid: 
-    srf.rasterGrid
-  srf.rasterBox(ticks=true)
+    srf.renderGrid
+  if srf.drawbox:
+    srf.renderBox(ticks=srf.drawticks)
 
   # color up the lines, FIFO
   for plot in srf.plots.mitems:
     # if done, we don't need to redraw
     if plot.done: continue
-    srf.drawFunc(plot.x, plot.y, plot.c)
+    for i in 0..<plot.x.len-1: 
+      srf.renderLine(plot.x[i],plot.y[i], plot.x[i+1], plot.y[i+1], 1.5, plot.c)
     plot.done = true
 
 proc saveToPng*(sur: var Surface, filename:string) =
   ## Convience function. Saves `img` into `filename`
-  sur.colorize
+  sur.render
   var px = ""
   for p in sur.pixels: px.add($p)
   if not savepng32(filename,px,sur.width,sur.height): 
     assert(false,"Error saving")
 
 proc png*(sur: var Surface): PNG[string] =
-  sur.colorize
+  sur.render
   var px = ""
   for p in sur.pixels: px.add($p)
   result = encodePNG32(px,sur.width,sur.height)

@@ -18,9 +18,11 @@ type
     origin*: tuple[x0,y0:float]
     pixels*: seq[Color]
     plots*: seq[tuple[x,y:seq[float],c:Color, done:bool]]
-    other*: seq[tuple[x,y:seq[float],c:Color, done:bool]]
     bg*: Color
     drawgrid*: bool
+    drawbox*: bool
+    drawticks*: bool
+    drawlabels*: bool
     #CHECK: other alternatives:
     #bg: seq[Color] # background pixels (background, grids etc)
     #fg: seq[Color] # foreground pixels (plot lines)
@@ -102,10 +104,8 @@ proc initSurface*(x,y:Axis) : Surface =
   result.height = abs(y.max.pixel-y.min.pixel)+1
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (x.origin,y.origin)
-  result.fillWith(White)
   result.bg = White
   result.plots = @[]
-  result.other = @[]
 
 proc initSurface*(x0,w,y0,h:int) : Surface =
   result.x = initAxis(x0.float,w.float, 0, 0, w)
@@ -114,6 +114,10 @@ proc initSurface*(x0,w,y0,h:int) : Surface =
   result.height = h#abs(y.max.pixel-y.min.pixel)+1
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (result.x.origin,result.y.origin)
-  result.fillWith(White) 
-  result.other = @[]
-  result.bg = White
+
+proc grid*(s: var Surface) = s.drawgrid = true
+proc box*(s: var Surface, ticks=false) = 
+  s.drawbox = true
+  if ticks:
+    s.drawticks = true
+    s.drawlabels = true
