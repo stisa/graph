@@ -34,36 +34,15 @@ proc jupyterPlotData*(sur:Surface): string {.deprecated.}=
   result = "#>jnps" & sw & "x" & sh & ss.readAll.encode() & "jnps<#"
 
 # New api idea ###
-proc colorize(srf: var Surface) =
-  # color up the lines, FIFO
-  for plot in srf.plots.mitems:
-    # if done, we don't need to redraw
-    if plot.done: continue
-    srf.drawFunc(plot.x, plot.y, plot.c)
-    plot.done = true
-
-proc saveTo*(sur: var Surface, filename:string) =
-  ## Convience function. Saves `img` into `filename`
-  sur.colorize
-  var px = ""
-  for p in sur.pixels: px.add($p)
-  if not savepng32(filename,px,sur.width,sur.height): 
-    assert(false,"Error saving")
-
-proc png*(sur: var Surface): PNG[string] =
-  sur.colorize
-  var px = ""
-  for p in sur.pixels: px.add($p)
-  result = encodePNG32(px,sur.width,sur.height)
+import graph/backendpng, graph/backendsvg
+export backendpng, backendsvg
 ##########
 
 when isMainModule:
-  import graph/color,graph/draw
-  var rt = initSurface( 0,160,0,120 )
-
-  rt.fillWith(Yellow)
-  ## Plot x,y with color `lncolor` and `scale`
-  # TODO: have a switch to use antialiased lines
-  #rt.line(0,0,5,5,Red)
-  rt.saveTo("test.png")
-  echo rt.jupyterPlotData
+  import nimsvg, math, arraymancer
+  let x = arange(0.0,10,0.1)
+  let y = sin(x)
+  var rt = xy(x.data,y.data)
+  rt.drawgrid = true
+  rt.saveToPng("tdraw.png")
+  rt.saveToSvg("tdraw.svg")

@@ -1,5 +1,5 @@
 import ./color
-
+import math
 type 
   Axis* = object
     max*: tuple[val:float,pixel:int]
@@ -18,6 +18,9 @@ type
     origin*: tuple[x0,y0:float]
     pixels*: seq[Color]
     plots*: seq[tuple[x,y:seq[float],c:Color, done:bool]]
+    other*: seq[tuple[x,y:seq[float],c:Color, done:bool]]
+    bg*: Color
+    drawgrid*: bool
     #CHECK: other alternatives:
     #bg: seq[Color] # background pixels (background, grids etc)
     #fg: seq[Color] # foreground pixels (plot lines)
@@ -31,13 +34,30 @@ proc pixelFromVal*(a:Axis,val:float):int =
     paddedmin = a.min.pixel + (((a.max.pixel-a.min.pixel) * a.padding) div 200).int
   #result = ((( (val) - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
   result = (
-    (
-      ((val) - a.min.val)/(a.max.val-a.min.val) * 
+    ( # We lose too much precision converting to int here :/
+      (((val) - a.min.val)/(a.max.val-a.min.val)) * 
       paddedmax.float
     ) + paddedmin.float
-  ).int 
-
-
+  ).round.int
+proc pixelFromVal2*(a:Axis,val:float, invert:bool=false):float =
+  let 
+    paddedmax = a.max.pixel - (((a.max.pixel-a.min.pixel) * a.padding) div 100)
+    paddedmin = a.min.pixel + (((a.max.pixel-a.min.pixel) * a.padding) div 200)
+  #result = ((( (val) - a.min.val)/(a.max.val-a.min.val) * (a.max.pixel-a.min.pixel).float)+(a.min.pixel).float).int 
+  if not invert:
+    result = (
+      (
+        ((val) - a.min.val)/(a.max.val-a.min.val) * 
+        paddedmax.float
+      ) + paddedmin.float
+    ) 
+  else:
+    result = a.max.pixel.float - (
+      (
+        ((val) - a.min.val)/(a.max.val-a.min.val) * 
+        paddedmax.float
+      ) + paddedmin.float
+    )
 proc `[]`*(sur:Surface, i,j:int):Color =
   ## j: position along the horizontal axis
   ## i: position along the vertical axis
@@ -83,7 +103,9 @@ proc initSurface*(x,y:Axis) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (x.origin,y.origin)
   result.fillWith(White)
+  result.bg = White
   result.plots = @[]
+  result.other = @[]
 
 proc initSurface*(x0,w,y0,h:int) : Surface =
   result.x = initAxis(x0.float,w.float, 0, 0, w)
@@ -93,4 +115,5 @@ proc initSurface*(x0,w,y0,h:int) : Surface =
   result.pixels = newSeq[Color](result.height*result.width)
   result.origin = (result.x.origin,result.y.origin)
   result.fillWith(White) 
-  result.plots = @[]
+  result.other = @[]
+  result.bg = White

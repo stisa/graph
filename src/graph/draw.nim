@@ -244,27 +244,27 @@ proc xy*(x,y: openarray[float], lncolor: Color = Viridis.blue, bgColor: Color = 
   let ya = initAxis(min(y),max(y),origin.y0, 0, size[1], padding)
 
   result = initSurface(xa,ya)
-
-  result.fillWith(bgColor)
+  result.bg = bgColor
   if grid:
-    result.grid()
+    result.drawgrid = true
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use non antialiased lines
   #result.drawAxis()
-  if box:
-    result.box(ticks=true)
+  #if box:
+  #  result.box(ticks=true)
   result.appendXY(x,y,lncolor)
 
-proc colorize(srf: var Surface) =
-  # color up the lines, FIFO
-  for plot in srf.plots.mitems:
-    # if done, we don't need to redraw
-    if plot.done: continue
-    srf.drawFunc(plot.x, plot.y, plot.c)
-    plot.done = true
+proc drawgrid*(s: var Surface) = s.drawgrid = true
 
 when isMainModule:
   import nimPNG
+  proc colorize(srf: var Surface) =
+    # color up the lines, FIFO
+    for plot in srf.plots.mitems:
+      # if done, we don't need to redraw
+      if plot.done: continue
+      srf.drawFunc(plot.x, plot.y, plot.c)
+      plot.done = true
 
   proc saveTo*(sur: var Surface,filename:string) =
     ## Convience function. Saves `img` into `filename`
@@ -280,7 +280,7 @@ when isMainModule:
   ## Plot x,y with color `lncolor` and `scale`
   # TODO: have a switch to use non antialiased lines
   srf.appendXY([1.0,2 ,3, 4], [2.0, 1.5, 1, 0.5], Viridis.orange)
-  srf.grid()
+  srf.drawgrid = true
   #rt.drawLine(0,0,5,5,Red)
   #srf.bresline(0,0, 60, 60, Red)
   srf.aaline(0,60, 60, 120, 2.0, Blue)
