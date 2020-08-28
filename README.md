@@ -53,3 +53,4 @@ Inside `graph` there are specific apis:
   * nope, checked the svg and it's plain lines => I need a better line algo
 * distinguish margin and padding
 * calculate max/min y value str len and adjust eg left margin to fit labels
+* svg backend: less strings, more nodes
