@@ -1209,7 +1209,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="src/graph.html">src/graph</a>, <a href="src/graph/backendpng.html">src/graph/backendpng</a>, <a href="src/graph/backendsvg.html">src/graph/backendsvg</a>, <a href="src/graph/color.html">src/graph/color</a>, <a href="src/graph/draw.html">src/graph/draw</a>, <a href="src/graph/plot.html">src/graph/plot</a>, <a href="src/graph/surface.html">src/graph/surface</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="src/graph.html">src/graph</a>, <a href="src/graph/backendpng.html">src/graph/backendpng</a>, <a href="src/graph/backendsvg.html">src/graph/backendsvg</a>, <a href="src/graph/color.html">src/graph/color</a>, <a href="src/graph/plot.html">src/graph/plot</a>, <a href="src/graph/surface.html">src/graph/surface</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="color: `$`(c: Color): string" href="src/graph/color.html#%24%2CColor">color: `$`(c: Color): string</a></li>
@@ -1225,10 +1225,6 @@ function main() {
           data-doc-search-tag="surface: `[]`(sur: Surface; x, y: float): Color" href="src/graph/surface.html#%5B%5D%2CSurface%2Cfloat%2Cfloat">surface: `[]`(sur: Surface; x, y: float): Color</a></li>
           <li><a class="reference external"
           data-doc-search-tag="surface: `[]`(sur: Surface; i, j: int): Color" href="src/graph/surface.html#%5B%5D%2CSurface%2Cint%2Cint">surface: `[]`(sur: Surface; i, j: int): Color</a></li>
-          </ul></dd>
-<dt><a name="aaline" href="#aaline"><span>aaline:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: aaline(srf: var Surface; x0, y0, x1, y1: int; w: float = 1.0; color: Color = Red)" href="src/graph/draw.html#aaline%2CSurface%2Cint%2Cint%2Cint%2Cint%2Cfloat%2CColor">draw: aaline(srf: var Surface; x0, y0, x1, y1: int; w: float = 1.0; color: Color = Red)</a></li>
           </ul></dd>
 <dt><a name="Axis" href="#Axis"><span>Axis:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1250,13 +1246,7 @@ function main() {
           </ul></dd>
 <dt><a name="box" href="#box"><span>box:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="draw: box(sur: var Surface; color: Color = Black)" href="src/graph/draw.html#box%2CSurface%2CColor">draw: box(sur: var Surface; color: Color = Black)</a></li>
-          <li><a class="reference external"
           data-doc-search-tag="surface: box(s: var Surface; ticks = false)" href="src/graph/surface.html#box%2CSurface">surface: box(s: var Surface; ticks = false)</a></li>
-          </ul></dd>
-<dt><a name="bresline" href="#bresline"><span>bresline:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: bresline(srf: var Surface; x1, y1, x2, y2: int; color: Color = Red)" href="src/graph/draw.html#bresline%2CSurface%2Cint%2Cint%2Cint%2Cint%2CColor">draw: bresline(srf: var Surface; x1, y1, x2, y2: int; color: Color = Red)</a></li>
           </ul></dd>
 <dt><a name="Color" href="#Color"><span>Color:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1265,20 +1255,6 @@ function main() {
 <dt><a name="color" href="#color"><span>color:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="color: color(r, g, b, a: int = 0): Color" href="src/graph/color.html#color%2Cint%2Cint%2Cint%2Cint">color: color(r, g, b, a: int = 0): Color</a></li>
-          </ul></dd>
-<dt><a name="drawAxis" href="#drawAxis"><span>drawAxis:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: drawAxis(sur: var Surface; tickperc, ytickprc: float = 10.0; color: Color = Black)" href="src/graph/draw.html#drawAxis%2CSurface%2Cfloat%2Cfloat%2CColor">draw: drawAxis(sur: var Surface; tickperc, ytickprc: float = 10.0; color: Color = Black)</a></li>
-          </ul></dd>
-<dt><a name="drawFunc" href="#drawFunc"><span>drawFunc:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: drawFunc(sur: var Surface; x, y: openArray[float]; lncolor: Color = Red)" href="src/graph/draw.html#drawFunc%2CSurface%2CopenArray%5Bfloat%5D%2CopenArray%5Bfloat%5D%2CColor">draw: drawFunc(sur: var Surface; x, y: openArray[float]; lncolor: Color = Red)</a></li>
-          </ul></dd>
-<dt><a name="drawProc" href="#drawProc"><span>drawProc:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: drawProc[T](sur: var Surface; x: openArray[T];
-            fn: proc (o: openArray[T]): openArray[T]; lncolor: Color = Red)" href="src/graph/draw.html#drawProc%2CSurface%2CopenArray%5BT%5D%2Cproc%28openArray%5BT%5D%29%2CColor">draw: drawProc[T](sur: var Surface; x: openArray[T];
-            fn: proc (o: openArray[T]): openArray[T]; lncolor: Color = Red)</a></li>
           </ul></dd>
 <dt><a name="fillWith" href="#fillWith"><span>fillWith:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1290,19 +1266,7 @@ function main() {
           </ul></dd>
 <dt><a name="grid" href="#grid"><span>grid:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="draw: grid(sur: var Surface; everyX: float = 0.2; everyY: float = 0.1;
-     color: Color = Viridis.gray)" href="src/graph/draw.html#grid%2CSurface%2Cfloat%2Cfloat%2CColor">draw: grid(sur: var Surface; everyX: float = 0.2; everyY: float = 0.1;
-     color: Color = Viridis.gray)</a></li>
-          <li><a class="reference external"
           data-doc-search-tag="surface: grid(s: var Surface)" href="src/graph/surface.html#grid%2CSurface">surface: grid(s: var Surface)</a></li>
-          </ul></dd>
-<dt><a name="gridX" href="#gridX"><span>gridX:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: gridX(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)" href="src/graph/draw.html#gridX%2CSurface%2Cfloat%2CColor">draw: gridX(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)</a></li>
-          </ul></dd>
-<dt><a name="gridY" href="#gridY"><span>gridY:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: gridY(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)" href="src/graph/draw.html#gridY%2CSurface%2Cfloat%2CColor">draw: gridY(sur: var Surface; every: float = 0.1; color: Color = Viridis.gray)</a></li>
           </ul></dd>
 <dt><a name="HalfTBlack" href="#HalfTBlack"><span>HalfTBlack:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -1334,10 +1298,6 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="surface: initSurface(x0, w, y0, h: int): Surface" href="src/graph/surface.html#initSurface%2Cint%2Cint%2Cint%2Cint">surface: initSurface(x0, w, y0, h: int): Surface</a></li>
           </ul></dd>
-<dt><a name="line" href="#line"><span>line:</span></a></dt><dd><ul class="simple">
-<li><a class="reference external"
-          data-doc-search-tag="draw: line(srf: var Surface; x1, y1, x2, y2: float; color: Color = Red)" href="src/graph/draw.html#line%2CSurface%2Cfloat%2Cfloat%2Cfloat%2Cfloat%2CColor">draw: line(srf: var Surface; x1, y1, x2, y2: float; color: Color = Red)</a></li>
-          </ul></dd>
 <dt><a name="pixelFromVal" href="#pixelFromVal"><span>pixelFromVal:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="surface: pixelFromVal(a: Axis; val: float): int" href="src/graph/surface.html#pixelFromVal%2CAxis%2Cfloat">surface: pixelFromVal(a: Axis; val: float): int</a></li>
@@ -1348,18 +1308,6 @@ function main() {
           </ul></dd>
 <dt><a name="plot" href="#plot"><span>plot:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="draw: plot(x, y: openArray[float]; lncolor: Color = Red; bgColor: Color = White;
-     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10; grid: bool = false;
-     box: bool = true; size = [432, 288]): Surface" href="src/graph/draw.html#plot%2CopenArray%5Bfloat%5D%2CopenArray%5Bfloat%5D%2CColor%2CColor%2Ctuple%5Bfloat%2Cfloat%5D%2Cint%2Cbool%2Cbool">draw: plot(x, y: openArray[float]; lncolor: Color = Red; bgColor: Color = White;
-     origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10; grid: bool = false;
-     box: bool = true; size = [432, 288]): Surface</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="draw: plot(srf: var Surface; x, y: openArray[float]; lncolor: Color = Red;
-     bgColor: Color = White; origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10)" href="src/graph/draw.html#plot%2CSurface%2CopenArray%5Bfloat%5D%2CopenArray%5Bfloat%5D%2CColor%2CColor%2Ctuple%5Bfloat%2Cfloat%5D%2Cint">draw: plot(srf: var Surface; x, y: openArray[float]; lncolor: Color = Red;
-     bgColor: Color = White; origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 10)</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="draw: plot[T](sur: var Surface; x: openArray[T]; fn: proc (o: T): T; lncolor: Color = Red)" href="src/graph/draw.html#plot%2CSurface%2CopenArray%5BT%5D%2Cproc%28T%29%2CColor">draw: plot[T](sur: var Surface; x: openArray[T]; fn: proc (o: T): T; lncolor: Color = Red)</a></li>
-          <li><a class="reference external"
           data-doc-search-tag="plot: plot(x, y: openArray[float]; lncolor: Color = Viridis.blue; bgColor: Color = White;
      origin: tuple[x0, y0: float] = (0.0, 0.0); padding = 20; grid: bool = false;
      box: bool = true; ticks = true; size = [432, 288]): Surface" href="src/graph/plot.html#plot%2CopenArray%5Bfloat%5D%2CopenArray%5Bfloat%5D%2CColor%2CColor%2Ctuple%5Bfloat%2Cfloat%5D%2Cint%2Cbool%2Cbool">plot: plot(x, y: openArray[float]; lncolor: Color = Viridis.blue; bgColor: Color = White;
@@ -1435,7 +1383,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-08-28 10:34:44 UTC</small>
+        <small>Made with Nim. Generated: 2020-08-28 10:44:17 UTC</small>
       </div>
     </div>
   </div>
